@@ -1,0 +1,6 @@
+framework module Pods_AirtableConnector {
+  umbrella header "Pods-AirtableConnector-umbrella.h"
+
+  export *
+  module * { export * }
+}
