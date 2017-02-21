@@ -161,6 +161,28 @@ extension UIImageView {
         })
     }
     
+    func shadowCast() {
+        self.layer.shadowOffset = CGSize(width: 0, height: 0)
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowRadius = 5
+        self.layer.shadowOpacity = 0.3
+        self.layer.masksToBounds = false;
+        self.clipsToBounds = false;
+    }
+    
+}
+
+extension UIView {
+    
+    func shadowCastView() {
+        self.layer.shadowOffset = CGSize(width: 0, height: 0)
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowRadius = 5
+        self.layer.shadowOpacity = 0.3
+        self.layer.masksToBounds = false;
+        self.clipsToBounds = false;
+    }
+    
 }
 
 extension UIColor {
@@ -171,15 +193,21 @@ extension UIColor {
         }
     }
     
-    var lightGreen: UIColor {
+    class var lightGreen: UIColor {
         get {
             return UIColor(red: 0.2, green: 0.85, blue: 0.2, alpha: 1.0)
         }
     }
     
-    var lightRed: UIColor {
+    class var lightRed: UIColor {
         get {
-            return UIColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0)
+            return UIColor(red: 1.0, green: 0.4, blue: 0.4, alpha: 1.0)
+        }
+    }
+    
+    class var eggshell: UIColor {
+        get {
+            return UIColor(red: 0.961, green: 0.961, blue: 0.961, alpha: 1.0)
         }
     }
 }

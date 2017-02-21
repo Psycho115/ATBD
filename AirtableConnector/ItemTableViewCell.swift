@@ -24,7 +24,7 @@ class ItemTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        self.syncIcon.tintColor = UIColor.lightBlue
+        self.syncIcon.tintColor = tableType.tintColor()
     }
     
     override func draw(_ rect: CGRect) {
@@ -65,11 +65,7 @@ class ItemTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
         self.setBackgroundColorForRatingLabel()
-        if selected {
-            self.backgroundColor = UIColor(red: 0.941, green: 0.941, blue: 0.941, alpha: 1.0)
-        } else {
-            self.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-        }
+        setHighlighted(false, animated: true)
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {

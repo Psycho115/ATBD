@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-class ItemBase {
+class ItemBase: Comparable {
     
     public var updated: Bool = false
     public var title: String = ""
@@ -31,6 +31,11 @@ class ItemBase {
     
     public var dateAdded: Date?
     
+    public func getDateComponent(unit: Calendar.Component) -> Int {
+        return Calendar.current.component(unit, from: self.dateAdded!)
+    }
+    
+    
     public var itemDetailTitle = [String]()
     
     func getItemJson() -> [String : [String : Any]]? {return nil}
@@ -44,7 +49,7 @@ class ItemBase {
         case .byTimeAdded:
             return left.dateAdded! > right.dateAdded!
         case .byTitle:
-            return left.title < right.title
+            return left.title.transformToPinYin() < right.title.transformToPinYin()
         }
     }
     
@@ -55,7 +60,7 @@ class ItemBase {
         case .byTimeAdded:
             return left.dateAdded! == right.dateAdded!
         case .byTitle:
-            return left.title == right.title
+            return left.title.transformToPinYin() == right.title.transformToPinYin()
         }
     }
     
@@ -79,12 +84,12 @@ class BookItem: ItemBase{
         self.airtableID = airtableID
         self.strDateAdded = dateAdded
         
-        itemDetailTitle = ["图片", "标题", "作者", "评分", "ISBN", "添加日期"]
+        itemDetailTitle = ["图片", "标题", "作者", "评分", "添加日期"]
     }
     
     override func getItemDetailArray() -> [String]? {
         if self.doubanID != "" {
-            return [self.image, self.title, self.author, String(self.rating), String(self.isbn), self.strDateAdded]
+            return [self.image, self.title, self.author, String(self.rating), self.strDateAdded]
         } else {
             return nil
         }

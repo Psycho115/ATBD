@@ -1,18 +1,30 @@
 PODS:
   - Alamofire (4.3.0)
+  - Jelly (1.2.2)
+  - NVActivityIndicatorView (3.2)
+  - PMAlertController (2.1.0)
+  - RainyRefreshControl (0.4.0)
   - ReachabilitySwift (3)
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
   - Alamofire (~> 4.3)
+  - Jelly
+  - NVActivityIndicatorView
+  - PMAlertController
+  - RainyRefreshControl
   - ReachabilitySwift (~> 3)
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: 856a113053a7bc9cbe5d6367a555d773fc5cfef7
+  Jelly: b4ff439f4804c193424e922a6ac3d311fbd78d1f
+  NVActivityIndicatorView: 28942c18ced111a6a3ce5e6f5b27d9d40116d639
+  PMAlertController: 2d2c19af12edb50753d636395f9456c8cde1e858
+  RainyRefreshControl: de2236ad2f46d6cfb22bf029e0067b48cdcb2925
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 6d2784c40b62fd211167694feb9001cad41d1e2e
+PODFILE CHECKSUM: 1afd65ab86778eca44b705ff65de455793952112
 
 COCOAPODS: 1.1.1

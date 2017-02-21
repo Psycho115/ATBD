@@ -10,12 +10,16 @@ import UIKit
 import SwiftyJSON
 import Alamofire
 import ReachabilitySwift
+import NVActivityIndicatorView
+import RainyRefreshControl
+import PMAlertController
 
 class ItemTableViewController: UITableViewController {
     
     let reachability = Reachability()!
     
-    var activityIndicatorView: UIActivityIndicatorView!
+    var activityIndicatorView: NVActivityIndicatorView!
+    var rainyRefreshControl: RainyRefreshControl?
     
     var toolbarSyncButton: UIBarButtonItem?
 
@@ -55,18 +59,17 @@ class ItemTableViewController: UITableViewController {
     
     func refresh() {
         
+        self.rainyRefreshControl?.beginRefreshing()
+        
         self.totalRecordsOnAirtable = 0
         self.idDict.removeAll()
         self.items.removeAll()
         
-        self.itemsSorted = [[]]
-        let sections = IndexSet(integersIn: 0..<(self.itemsSorted.count))
-        self.tableView.reloadSections(sections, with: .fade)
+        //self.itemsSorted = [[]]
+        //self.tableView.reloadData()
         
-        self.loadingBar.appear(finished: {
-            self.retrieveItems()
-            self.navigationController?.setToolbarHidden(true, animated: true)
-        })
+        self.retrieveItems()
+        self.navigationController?.setToolbarHidden(true, animated: true)
     }
     
     func retrieveItems() {
@@ -202,61 +205,51 @@ class ItemTableViewController: UITableViewController {
         
         if self.fetchingProgress == 1.0 {
             if self.TotalItemsToBeUpdated == 0 {
-                let alertController = UIAlertController(title: "内容未更改", message: "无需更新Airtable", preferredStyle: UIAlertControllerStyle.alert)
-                let dismissAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel) { (UIAlertAction) in
+                let alertVC = PMAlertController(title: "内容未更改", description: "无需更新Airtable", image: nil, style: .alert)
+                let action = PMAlertAction(title: "OK", style: .cancel, action: { () in
                     self.dismiss(animated: true)
-                }
-                alertController.addAction(dismissAction)
-                self.present(alertController, animated: true)
+                })
+                alertVC.addAction(action)
+                self.present(alertVC, animated: true, completion: nil)
                 return
             }
             else {
                 self.toolbarSyncButton?.customView?.startRotating(isClockwise: false)
             }
         } else {
-            let alertController = UIAlertController(title: "请稍后", message: "列表加载中", preferredStyle: UIAlertControllerStyle.alert)
-            self.present(alertController, animated: true)
+            let alertVC = PMAlertController(title: "请稍后", description: "正在更新", image: nil, style: .alert)
+            let action = PMAlertAction(title: "OK", style: .cancel, action: { () in
+                self.dismiss(animated: true)
+            })
+            alertVC.addAction(action)
+            self.present(alertVC, animated: true, completion: nil)
             return
         }
         
         for (section, itemsArray) in self.itemsSorted.enumerated() {
             for (row, item) in itemsArray.enumerated() {
                 if item.updated {continue}
-                //            let patch_data = item.getItemJson()
-                //            let authHeader: HTTPHeaders = ["Authorization": "Bearer \(apiKey)"]
-                //            if let patchUrl = self.table.mainUrl() {
-                //                Alamofire.request(patchUrl+"/"+item.airtableID, method: .patch, parameters: patch_data, encoding: JSONEncoding.default, headers: authHeader).responseJSON { response in
-                //                    switch response.result {
-                //                    case .success( _):
-                //                        item.updated = true
-                //                        print("\(item.title) updated")
-                //                        self.tableView.reloadData()
-                //                    case .failure( _):
-                //                        print("Failed to connect to airtable API")
-                //                    }
-                //                }
-                //            }
-                if let cell = self.tableView.cellForRow(at: IndexPath(row: row, section: section)) as? ItemTableViewCell {
-                    cell.startSyncronizing()
+                let cell = self.tableView.cellForRow(at: IndexPath(row: row, section: section)) as? ItemTableViewCell
+                cell?.startSyncronizing()
+                let patch_data = item.getItemJson()
+                let authHeader: HTTPHeaders = ["Authorization": "Bearer \(apiKey)"]
+                if let patchUrl = tableType.mainUrl() {
+                    Alamofire.request(patchUrl+"/"+item.airtableID, method: .patch, parameters: patch_data, encoding: JSONEncoding.default, headers: authHeader).responseJSON { response in
+                        switch response.result {
+                        case .success( _):
+                            item.updated = true
+                            self.itemsRemainsToBeUpdated -= 1
+                            print("\(item.title) updated")
+                            cell?.stopSyncronizing()
+                            if self.itemsRemainsToBeUpdated == 0 {
+                                _ = self.toolbarSyncButton?.customView?.stopRotating()
+                            }
+                        case .failure( _):
+                            print("Failed to connect to airtable API")
+                        }
+                    }
                 }
-                Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(timerFireMethod), userInfo: IndexPath(row: row, section: section), repeats: false);
             }
-        }
-        
-    }
-    
-    func timerFireMethod(timer:Timer) {
-        let path = timer.userInfo as! IndexPath
-        let item = self.itemsSorted[path.section][path.row]
-        item.updated = true
-        self.itemsRemainsToBeUpdated -= 1
-        if let cell = self.tableView.cellForRow(at: path) as? ItemTableViewCell {
-            cell.stopSyncronizing()
-        }
-        print("\(item.title) updated")
-        //self.tableView.reloadData()
-        if self.itemsRemainsToBeUpdated == 0 {
-            _ = self.toolbarSyncButton?.customView?.stopRotating()
         }
     }
     
@@ -264,15 +257,27 @@ class ItemTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.clearsSelectionOnViewWillAppear = true
+        
         //loading indicator
-        activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        activityIndicatorView = NVActivityIndicatorView(frame: self.view.frame)
+        activityIndicatorView.type = .ballScaleRippleMultiple
+        activityIndicatorView.color = tableType.tintColor()!
+        activityIndicatorView.padding = CGFloat(160)
         tableView.backgroundView = activityIndicatorView
         
         //add footer to delete singlelines
         self.tableView.tableFooterView = UIView()
         
+        //section index
+        self.tableView.sectionIndexColor = tableType.tintColor()!
+        self.tableView.sectionIndexBackgroundColor = UIColor.eggshell
+        
         //refreshing
-        self.refreshControl?.addTarget(self, action: #selector(ItemTableViewController.refresh), for: UIControlEvents.valueChanged)
+        self.refreshControl = nil
+        self.rainyRefreshControl = RainyRefreshControl(bgColor: tableType.tintColor()!)
+        self.rainyRefreshControl?.addTarget(self, action: #selector(ItemTableViewController.refresh), for: .valueChanged)
+        self.tableView.addSubview(self.rainyRefreshControl!)
         
         retrieveItems()
     }
@@ -290,7 +295,7 @@ class ItemTableViewController: UITableViewController {
     // MARK: - Table view data source
     
     //data source for table cells
-    var itemsSorted = [Array<ItemBase>()] {
+    var itemsSorted = [[ItemBase]]() {
         didSet{
             if !isSorted { return }
             if self.activityIndicatorView.isAnimating {
@@ -304,8 +309,7 @@ class ItemTableViewController: UITableViewController {
                     completion: {
                         if $0 {
                             self.activityIndicatorView.stopAnimating()
-                            let sections = IndexSet(integersIn: 0..<(self.itemsSorted.count))
-                            self.tableView.reloadSections(sections, with: .fade)
+                            self.tableView.reloadData()
                             self.dismiss(animated: true)
                             self.loadingBar.dispear(finished: {
                                 self.loadingBar.setProgress(0.0, animated: false)
@@ -314,24 +318,17 @@ class ItemTableViewController: UITableViewController {
                         }
                 }
                 )
-            } else if (self.refreshControl?.isRefreshing)! {
-                self.loadingBar.dispear(finished: {
-                    self.loadingBar.setProgress(0.0, animated: false)
-                    let sections = IndexSet(integersIn: 0..<(self.itemsSorted.count))
-                    self.tableView.reloadSections(sections, with: .fade)
-                    self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-                    self.refreshControl?.endRefreshing()
-                    self.navigationController?.setToolbarHidden(false, animated: true)
-                    self.dismiss(animated: true)
-                })
             } else {
-                let sections = IndexSet(integersIn: 0..<(self.itemsSorted.count))
-                self.tableView.reloadSections(sections, with: .fade)
-                //scroll to top
-                self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+                self.rainyRefreshControl?.endRefreshing()
+                //self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+                self.tableView.reloadData()
+                self.navigationController?.setToolbarHidden(false, animated: true)
+                self.dismiss(animated: true)
             }
         }
     }
+    
+    var sectionTitles = [String]()
     
     var isSorted: Bool = false
     var previousSortSetting: SortSettings? {
@@ -355,26 +352,102 @@ class ItemTableViewController: UITableViewController {
     }
     
     private func performSortAction() {
+        
         self.isSorted = false
         self.itemsSorted.removeAll()
+        self.sectionTitles.removeAll()
+        
+        var itemsSortedTmp = [[ItemBase]]()
+        //let items = self.items
+        
+        let sets = self.generateSectionSets()
+        var dict = self.generateSectionDict()
+        
+        for (_, key) in sets.enumerated() {
+            self.sectionTitles.append(key.description)
+            itemsSortedTmp.append(dict[key.description]!.sorted(by: {$0 < $1}))
+        }
         
         //last modification
         self.isSorted = true
-        self.itemsSorted.append(self.items.sorted(by: { $0 < $1 }))
+        self.itemsSorted = itemsSortedTmp
+    }
+    
+    private func generateSectionSets() -> [String] {
+        switch sortSetting.sectionType {
+        case .byYear:
+            return Set(self.items.map{
+                $0.getDateComponent(unit: .year).description
+            }).sorted(by: {$0<$1})
+        case .byMonth:
+            return Set(self.items.map{
+                $0.getDateComponent(unit: .month).description
+            }).sorted(by: {$0<$1})
+        case .byTitleFirstLetter:
+            return Set(self.items.map{
+                $0.title.transformToPinYin()[0]
+            }).sorted(by: {$0<$1})
+        case .noSection:
+            return ["所有条目"]
+        }
+    }
+    
+    private func generateSectionDict() -> [String: [ItemBase]] {
+        var dict = [String: [ItemBase]]()
+        
+        for item in self.items {
+            let key: String
+            switch sortSetting.sectionType {
+            case .byYear:
+                key = item.getDateComponent(unit: .year).description
+            case .byMonth:
+                key = item.getDateComponent(unit: .month).description
+            case .byTitleFirstLetter:
+                key = item.title.transformToPinYin()[0]
+            case .noSection:
+                key = "所有条目"
+            }
+            
+            if dict[key] != nil {
+                dict[key]!.append(item)
+            }
+            else {
+                dict[key] = []
+                dict[key]!.append(item)
+            }
+        }
+        
+        return dict
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.itemsSorted[section].count
     }
     
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return self.itemsSorted.count
+    }
+    
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 30
     }
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 5
+    }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.itemsSorted.first?.first?.title ?? ""
+        return self.sectionTitles[section]
     }
-
+    
+//    override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+//        self.tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top, animated: true)
+//        return index
+//    }
+    
+//    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+//        return self.sectionTitles
+//    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemTableViewCell
         switch tableType {
@@ -396,21 +469,17 @@ class ItemTableViewController: UITableViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowDetail"
-        {
-            if let destinationVC = segue.destination as? ItemDetailTableViewController {
+        if segue.identifier == "ShowCardPage"{
+            if let destinationVC = segue.destination as? CardPageViewController {
                 if let cell = sender as? ItemTableViewCell{
                     let title = cell.titleLabel?.text
-                    switch tableType {
-                    case .books:
-                        destinationVC.navigationItem.title = "书目详情"
-                    case .movies:
-                        destinationVC.navigationItem.title = "影片详情"
-                    case .unsigned:
-                        break
+                    var sortedItemList = [ItemBase]()
+                    for section in self.itemsSorted {
+                        sortedItemList.append(contentsOf: section)
                     }
-                    if let item = self.items.first(where: {$0.title == title}) {
-                        destinationVC.chosenItem = item
+                    if let index = sortedItemList.index(where: {$0.title == title}) {
+                        destinationVC.itemList = sortedItemList
+                        destinationVC.startPageIndex = index
                     }
                 }
             }

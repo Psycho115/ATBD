@@ -8,8 +8,11 @@
 
 import UIKit
 import ReachabilitySwift
+import Jelly
 
 class ItemViewController: UIViewController {
+    
+    var jellyAnimator: JellyAnimator?
     
     var reachability = Reachability()!
     
@@ -59,7 +62,7 @@ class ItemViewController: UIViewController {
         //toolbar
         let imageView = UIImageView(image: #imageLiteral(resourceName: "ic_cached_white"))
         imageView.isUserInteractionEnabled = true
-        imageView.tintColor = UIColor.lightBlue
+        imageView.tintColor = tableType.tintColor()
         let tapStepGestureRecognizer = UITapGestureRecognizer(target: self.tableViewController, action: #selector(ItemTableViewController.UpdateAirtable))
         imageView.addGestureRecognizer(tapStepGestureRecognizer)
         let barItem = UIBarButtonItem(customView: imageView)
@@ -68,16 +71,17 @@ class ItemViewController: UIViewController {
         
         //loadingbar
         self.tableViewController?.loadingBar = self.loadingBar
-
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+        
+        //UI
+        self.popoverButton.tintColor = tableType.tintColor()
+        self.loadingBar.progressTintColor = tableType.tintColor()
+                
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //self.navigationController?.setToolbarHidden(false, animated: true)
+        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: tableType.tintColor() as Any!]
+        self.navigationController?.navigationBar.tintColor = tableType.tintColor()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -85,6 +89,30 @@ class ItemViewController: UIViewController {
     }
     
     // MARK: - Navigation
+    
+    func sortSettingDone() {
+        self.tableViewController?.sortItems()
+    }
+    
+    
+    @IBOutlet weak var popoverButton: UIBarButtonItem!
+    
+    @IBAction func popoverSortTable(sender: UIBarButtonItem) {
+        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "SortMenuViewController") as! SortMenuViewController
+        viewController.parentVC = self
+
+        var presentation = JellySlideInPresentation()
+        presentation.directionShow = .bottom
+        presentation.directionDismiss = .bottom
+        presentation.heightForViewController = JellyConstants.Size.custom(value: 230)
+        presentation.widthForViewController = JellyConstants.Size.custom(value: 350)
+        presentation.verticalAlignemt = .bottom
+        presentation.backgroundStyle = .dimmed(alpha: 0.4)
+        presentation.presentationCurve = .easeInEaseOut
+        self.jellyAnimator = JellyAnimator(presentation:presentation)
+        self.jellyAnimator?.prepare(viewController: viewController)
+        self.present(viewController, animated: true, completion: nil)
+    }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

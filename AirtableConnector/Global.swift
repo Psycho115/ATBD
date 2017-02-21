@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 //sort setting
 
@@ -28,19 +29,25 @@ enum SectionType {
             return "按首字母"
         }
     }
+    
+    func convertToInt() -> Int {
+        switch self {
+        case .noSection:
+            return 0
+        case .byMonth:
+            return 2
+        case .byYear:
+            return 3
+        case .byTitleFirstLetter:
+            return 1
+        }
+    }
 }
 
 enum SortType {
     case byTimeAdded
     case byRating
     case byTitle
-    
-    func match(str: String) -> SortType? {
-        if (str == SortType.byRating.typeStr()) { return SortType.byRating }
-        else if (str == SortType.byTitle.typeStr()) { return SortType.byTitle }
-        else if (str == SortType.byTimeAdded.typeStr()) { return SortType.byTimeAdded }
-        else { return nil }
-    }
     
     func typeStr() -> String {
         switch self {
@@ -50,6 +57,17 @@ enum SortType {
             return "按评分"
         case .byTitle:
             return "按标题"
+        }
+    }
+    
+    func convertToInt() -> Int {
+        switch self {
+        case .byTimeAdded:
+            return 0
+        case .byRating:
+            return 1
+        case .byTitle:
+            return 2
         }
     }
 
@@ -68,17 +86,36 @@ struct SortSettings {
     }
     var reversed = false
     
-    mutating func matchSort(str: String) {
-        if (str == SortType.byRating.typeStr()) { self.sortType = .byRating }
-        else if (str == SortType.byTitle.typeStr()) { self.sortType = .byTitle }
-        else if (str == SortType.byTimeAdded.typeStr()) { self.sortType = .byTimeAdded }
-        else {print("no match")}
+    mutating func matchSort(index: Int) {
+        switch index {
+        case 0:
+            self.sortType = .byTimeAdded
+        case 1:
+            self.sortType = .byRating
+        case 2:
+            self.sortType = .byTitle
+        default:
+            break
+        }
     }
     
-    mutating func matchSection(str: String) {
-        if (str == SectionType.byMonth.typeStr()) { self.sectionType = .byMonth }
-        else if (str == SectionType.byTitleFirstLetter.typeStr()) { self.sectionType = .byTitleFirstLetter }
-        else if (str == SectionType.byYear.typeStr()) { self.sectionType = .byYear }
+    mutating func matchSection(index: Int) {
+        switch index {
+        case 0:
+            self.sectionType = .noSection
+        case 1:
+            self.sectionType = .byTitleFirstLetter
+        case 2:
+            self.sectionType = .byMonth
+        case 3:
+            self.sectionType = .byYear
+        default:
+            break
+        }
+    }
+    
+    func convertToInt() -> (Int, Int) {
+        return (self.sectionType.convertToInt(), self.sortType.convertToInt())
     }
     
     static func ==(left: SortSettings, right: SortSettings) -> Bool {
@@ -114,6 +151,17 @@ enum TableType {
             return "https://api.douban.com/v2/book/"
         case .movies:
             return "https://api.douban.com/v2/movie/subject/"
+        }
+    }
+    
+    func tintColor() -> UIColor? {
+        switch self {
+        case .unsigned:
+            return nil
+        case .books:
+            return UIColor.lightBlue
+        case .movies:
+            return UIColor.lightRed
         }
     }
 }
