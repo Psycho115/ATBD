@@ -138,10 +138,10 @@
                         <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" indentationWidth="0.0" reuseIdentifier="ItemCell" rowHeight="66" id="wOv-Vk-bmp" customClass="ItemTableViewCell" customModule="AirtableConnector" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="56" width="375" height="66"/>
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wOv-Vk-bmp" id="Top-px-M29">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="65"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QC9-WC-RsT">
@@ -310,7 +310,7 @@
                         <viewControllerLayoutGuide type="bottom" id="jKU-wT-aA1"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="jdM-Um-cZ2">
-                        <rect key="frame" x="0.0" y="0.0" width="350" height="220"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请选择分组方式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aEe-Ao-Fse">
@@ -320,104 +320,115 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请选择排序方式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PvQ-ka-ZdT">
-                                <rect key="frame" x="16" y="95" width="100" height="17"/>
+                                <rect key="frame" x="16" y="100" width="100" height="17"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" translatesAutoresizingMaskIntoConstraints="NO" id="DAY-o0-rbt">
-                                <rect key="frame" x="31" y="52" width="288" height="28"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" translatesAutoresizingMaskIntoConstraints="NO" id="DAY-o0-rbt" customClass="RadioButtonGroupView" customModule="AirtableConnector" customModuleProvider="target">
+                                <rect key="frame" x="31" y="52" width="313" height="28"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z29-tQ-6nL">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z29-tQ-6nL" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="40" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="不分组">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="DAY-o0-rbt" eventType="touchUpInside" id="KaR-4K-BmT"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3zt-1Q-O9o">
-                                        <rect key="frame" x="75.5" y="0.0" width="54" height="28"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3zt-1Q-O9o" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
+                                        <rect key="frame" x="84" y="0.0" width="54" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按首字母">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="DAY-o0-rbt" eventType="touchUpInside" id="FgF-fO-9wq"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PSo-qO-HnV">
-                                        <rect key="frame" x="165.5" y="0.0" width="40" height="28"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PSo-qO-HnV" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
+                                        <rect key="frame" x="182" y="0.0" width="40" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按月份">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="DAY-o0-rbt" eventType="touchUpInside" id="7m6-EM-hwk"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="toD-oI-uBE">
-                                        <rect key="frame" x="248" y="0.0" width="40" height="28"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="toD-oI-uBE" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
+                                        <rect key="frame" x="273" y="0.0" width="40" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按年份">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="DAY-o0-rbt" eventType="touchUpInside" id="frx-9X-PEg"/>
+                                        </connections>
                                     </button>
                                 </subviews>
+                                <connections>
+                                    <outletCollection property="radioButtonGroupList" destination="Z29-tQ-6nL" collectionClass="NSMutableArray" id="sdD-H1-zNX"/>
+                                    <outletCollection property="radioButtonGroupList" destination="3zt-1Q-O9o" collectionClass="NSMutableArray" id="C0I-Vi-fbf"/>
+                                    <outletCollection property="radioButtonGroupList" destination="PSo-qO-HnV" collectionClass="NSMutableArray" id="Pd7-q1-2ZN"/>
+                                    <outletCollection property="radioButtonGroupList" destination="toD-oI-uBE" collectionClass="NSMutableArray" id="7Jy-Kn-ABJ"/>
+                                </connections>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" translatesAutoresizingMaskIntoConstraints="NO" id="uEu-cr-AUq">
-                                <rect key="frame" x="31" y="127" width="288" height="28"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" translatesAutoresizingMaskIntoConstraints="NO" id="uEu-cr-AUq" customClass="RadioButtonGroupView" customModule="AirtableConnector" customModuleProvider="target">
+                                <rect key="frame" x="31" y="132" width="313" height="28"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGh-en-nNk">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGh-en-nNk" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="67" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按添加时间">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="uEu-cr-AUq" eventType="touchUpInside" id="QFb-tI-jjT"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJd-xb-xCO">
-                                        <rect key="frame" x="127.5" y="0.0" width="40" height="28"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJd-xb-xCO" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
+                                        <rect key="frame" x="140" y="0.0" width="40" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按评分">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="uEu-cr-AUq" eventType="touchUpInside" id="lJQ-qN-tpk"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="79m-xg-lwD">
-                                        <rect key="frame" x="234" y="0.0" width="54" height="28"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="79m-xg-lwD" customClass="ZFRippleButton" customModule="AirtableConnector" customModuleProvider="target">
+                                        <rect key="frame" x="259" y="0.0" width="54" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="按首字母">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="radioTouchedWithSender:" destination="uEu-cr-AUq" eventType="touchUpInside" id="ZdL-aU-hEd"/>
+                                        </connections>
                                     </button>
                                 </subviews>
-                            </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0qB-uY-k6M">
-                                <rect key="frame" x="0.0" y="180" width="350" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="GZ2-j4-psR"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                <state key="normal" image="ic_gavel_white">
-                                    <color key="titleColor" red="0.96099999999999997" green="0.96099999999999997" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="0.0"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="doneDismiss:" destination="mdq-Cf-W83" eventType="touchUpInside" id="7lN-XD-RIn"/>
+                                    <outletCollection property="radioButtonGroupList" destination="nGh-en-nNk" collectionClass="NSMutableArray" id="3aR-YT-roQ"/>
+                                    <outletCollection property="radioButtonGroupList" destination="qJd-xb-xCO" collectionClass="NSMutableArray" id="Gd5-wD-Jlh"/>
+                                    <outletCollection property="radioButtonGroupList" destination="79m-xg-lwD" collectionClass="NSMutableArray" id="kjG-Cu-ieB"/>
                                 </connections>
-                            </button>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="0.96079862117767334" green="0.96077799797058105" blue="0.96078205108642578" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="aEe-Ao-Fse" firstAttribute="leading" secondItem="jdM-Um-cZ2" secondAttribute="leadingMargin" id="4WG-wO-D1J"/>
                             <constraint firstItem="DAY-o0-rbt" firstAttribute="leading" secondItem="jdM-Um-cZ2" secondAttribute="leadingMargin" constant="15" id="50a-DN-Jua"/>
                             <constraint firstItem="aEe-Ao-Fse" firstAttribute="top" secondItem="I3J-pX-PFw" secondAttribute="bottom" constant="20" id="GIG-qO-GUN"/>
-                            <constraint firstItem="0qB-uY-k6M" firstAttribute="leading" secondItem="jdM-Um-cZ2" secondAttribute="leading" id="L2q-c5-fgO"/>
-                            <constraint firstItem="PvQ-ka-ZdT" firstAttribute="top" secondItem="DAY-o0-rbt" secondAttribute="bottom" constant="15" id="Pi6-Zy-bgm"/>
+                            <constraint firstItem="PvQ-ka-ZdT" firstAttribute="top" secondItem="DAY-o0-rbt" secondAttribute="bottom" constant="20" id="Pi6-Zy-bgm"/>
                             <constraint firstItem="PvQ-ka-ZdT" firstAttribute="leading" secondItem="jdM-Um-cZ2" secondAttribute="leadingMargin" id="V9U-VG-UY5"/>
-                            <constraint firstItem="jKU-wT-aA1" firstAttribute="top" secondItem="0qB-uY-k6M" secondAttribute="bottom" id="ch7-Nx-uJo"/>
                             <constraint firstItem="uEu-cr-AUq" firstAttribute="top" secondItem="PvQ-ka-ZdT" secondAttribute="bottom" constant="15" id="d7r-2g-rJl"/>
                             <constraint firstItem="DAY-o0-rbt" firstAttribute="top" secondItem="aEe-Ao-Fse" secondAttribute="bottom" constant="15" id="dBg-gg-PGM"/>
                             <constraint firstAttribute="trailingMargin" secondItem="uEu-cr-AUq" secondAttribute="trailing" constant="15" id="eQc-f5-5qa"/>
                             <constraint firstAttribute="trailingMargin" secondItem="DAY-o0-rbt" secondAttribute="trailing" constant="15" id="fJz-Qo-RlQ"/>
                             <constraint firstItem="uEu-cr-AUq" firstAttribute="leading" secondItem="jdM-Um-cZ2" secondAttribute="leadingMargin" constant="15" id="z1P-em-kdB"/>
-                            <constraint firstAttribute="trailing" secondItem="0qB-uY-k6M" secondAttribute="trailing" id="zQP-kR-37H"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -425,17 +436,15 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="350" height="220"/>
                     <nil key="simulatedStatusBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="350" height="220"/>
                     <connections>
-                        <outlet property="doneButton" destination="0qB-uY-k6M" id="mod-Q6-0nu"/>
+                        <outlet property="sectionRatioButtonsView" destination="DAY-o0-rbt" id="IxW-lS-q6L"/>
+                        <outlet property="sortRatioButtonsView" destination="uEu-cr-AUq" id="cQv-Mo-aYQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2o8-nc-sYh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3444.8000000000002" y="-562.21889055472263"/>
+            <point key="canvasLocation" x="3446" y="-369"/>
         </scene>
         <!--Detail Card View Controller-->
         <scene sceneID="unt-Ge-x2f">
@@ -644,7 +653,6 @@
         <image name="ic_book" width="128" height="128"/>
         <image name="ic_cloud_queue_white" width="24" height="24"/>
         <image name="ic_film" width="128" height="128"/>
-        <image name="ic_gavel_white" width="24" height="24"/>
         <image name="ic_sort_white" width="24" height="24"/>
         <image name="ic_star_half_white" width="24" height="24"/>
         <image name="ic_star_white" width="24" height="24"/>

@@ -16,70 +16,22 @@ class SortMenuViewController: UIViewController {
     var tmpSortSetting = sortSetting
     
     //outlets
-    @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var sortRatioButtonsView: RadioButtonGroupView!
+    @IBOutlet weak var sectionRatioButtonsView: RadioButtonGroupView!
     
-    @IBAction func doneDismiss(_ sender: UIButton) {
+    func dismissComplete() {
+        let sortSelection = sortRatioButtonsView.getRadioButtonSelected()
+        tmpSortSetting.matchSort(str: sortSelection!)
+        let sectionSelection = sectionRatioButtonsView.getRadioButtonSelected()
+        tmpSortSetting.matchSection(str: sectionSelection!)
         sortSetting = self.tmpSortSetting
-        self.dismiss(animated: true) { self.parentVC?.sortSettingDone() }
     }
-    
-    //pickers data source
-    let sortTitles = [SortType.byTimeAdded.typeStr(), SortType.byRating.typeStr(), SortType.byTitle.typeStr()]
-    let sectionTitles = ["不", SectionType.byTitleFirstLetter.typeStr(), SectionType.byMonth.typeStr(), SectionType.byYear.typeStr()]
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.doneButton.tintColor = tableType.tintColor()
-
+            
+        sortRatioButtonsView.setRadioButtonSelected(buttonTitle: tmpSortSetting.sortType.typeStr())
+        sectionRatioButtonsView.setRadioButtonSelected(buttonTitle: tmpSortSetting.sectionType.typeStr())
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    //picker data source & delegate
-    
-//    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-//        return 2
-//    }
-//    
-//    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-//        if component == 0 { return self.sectionTitles.count }
-//        else { return self.sortTitles.count }
-//    }
-//    
-//    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-//        return 28
-//    }
-//    
-//    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-//        
-//        var label: UILabel
-//        if let view = view as? UILabel { label = view }
-//        else { label = UILabel() }
-//        
-//        label.textColor = .black
-//        label.textAlignment = .center
-//        label.font = UIFont(name: "SanFranciscoText-Light", size: 17)
-//        
-//        if component == 0 { label.text = self.sectionTitles[row] + "分组" }
-//        else { label.text = self.sortTitles[row] + "排序" }
-//        
-//        return label
-//    }
-//    
-//    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-//        if component == 0 {
-//            self.tmpSortSetting.matchSection(index: row)
-//        }
-//        else {
-//            self.tmpSortSetting.matchSort(index: row)
-//        }
-//    }
-    
-    
-    // MARK: - Navigation
 
 }

@@ -20,11 +20,11 @@ enum SectionType {
     func typeStr() -> String {
         switch self {
         case .noSection:
-            return "未分组"
+            return "不分组"
         case .byMonth:
-            return "按加入月份"
+            return "按月份"
         case .byYear:
-            return "按加入年份"
+            return "按年份"
         case .byTitleFirstLetter:
             return "按首字母"
         }
@@ -52,7 +52,7 @@ enum SortType {
     func typeStr() -> String {
         switch self {
         case .byTimeAdded:
-            return "按加入时间"
+            return "按添加时间"
         case .byRating:
             return "按评分"
         case .byTitle:
@@ -74,40 +74,32 @@ enum SortType {
 }
 
 struct SortSettings {
-    var sectionType = SectionType.noSection {
-        didSet {
-            print("\(self.sectionType) is selected!")
-        }
-    }
-    var sortType = SortType.byTimeAdded {
-        didSet {
-            print("\(self.sortType) is selected!")
-        }
-    }
+    var sectionType = SectionType.noSection
+    var sortType = SortType.byTimeAdded
     var reversed = false
     
-    mutating func matchSort(index: Int) {
-        switch index {
-        case 0:
+    mutating func matchSort(str: String) {
+        switch str {
+        case "按添加时间":
             self.sortType = .byTimeAdded
-        case 1:
+        case "按评分":
             self.sortType = .byRating
-        case 2:
+        case "按首字母":
             self.sortType = .byTitle
         default:
             break
         }
     }
     
-    mutating func matchSection(index: Int) {
-        switch index {
-        case 0:
+    mutating func matchSection(str: String) {
+        switch str {
+        case "不分组":
             self.sectionType = .noSection
-        case 1:
+        case "按首字母":
             self.sectionType = .byTitleFirstLetter
-        case 2:
+        case "按月份":
             self.sectionType = .byMonth
-        case 3:
+        case "按年份":
             self.sectionType = .byYear
         default:
             break

@@ -21,10 +21,8 @@ class DetailCardViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.bookmark.tintColor = tableType.tintColor()
         self.starStack.tintColor = UIColor.orange
         self.coverImage.shadowCast()
-        self.bookmark.shadowCast()
     }
 
     override func viewWillAppear(_ animated: Bool) {

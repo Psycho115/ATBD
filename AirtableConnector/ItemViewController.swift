@@ -90,11 +90,6 @@ class ItemViewController: UIViewController {
     
     // MARK: - Navigation
     
-    func sortSettingDone() {
-        self.tableViewController?.sortItems()
-    }
-    
-    
     @IBOutlet weak var popoverButton: UIBarButtonItem!
     
     @IBAction func popoverSortTable(sender: UIBarButtonItem) {
@@ -104,11 +99,21 @@ class ItemViewController: UIViewController {
         var presentation = JellySlideInPresentation()
         presentation.directionShow = .bottom
         presentation.directionDismiss = .bottom
-        presentation.heightForViewController = JellyConstants.Size.custom(value: 230)
-        presentation.widthForViewController = JellyConstants.Size.custom(value: 350)
+        
+        //size and postion
+        let gap = 10
+        let width = UIScreen.main.bounds.width - CGFloat(2*gap)
+        presentation.widthForViewController = JellyConstants.Size.custom(value: width)
+        presentation.heightForViewController = JellyConstants.Size.custom(value: 200)
+        presentation.gapToScreenEdge = gap
+
         presentation.verticalAlignemt = .bottom
         presentation.backgroundStyle = .dimmed(alpha: 0.4)
         presentation.presentationCurve = .easeInEaseOut
+        presentation.dismissComplete = {
+            viewController.dismissComplete()
+            self.tableViewController?.sortItems()
+        }
         self.jellyAnimator = JellyAnimator(presentation:presentation)
         self.jellyAnimator?.prepare(viewController: viewController)
         self.present(viewController, animated: true, completion: nil)
