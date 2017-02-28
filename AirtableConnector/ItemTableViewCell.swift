@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ItemTableViewCell: UITableViewCell {
+class ItemTableViewCell: SwipeTableViewCell {
 
     @IBOutlet weak var syncIcon: UIImageView!
     @IBOutlet weak var detailLabel: UILabel!
@@ -35,7 +35,8 @@ class ItemTableViewCell: UITableViewCell {
         self.titleLabel.text = title
         self.detailLabel.text = detail
         self.ratingLabel.text = String(rating)
-        self.syncIcon.isHidden = isSynced
+        self.syncIcon.image = isSynced ? #imageLiteral(resourceName: "ic_cloud_done_white") : #imageLiteral(resourceName: "ic_cloud_queue_white")
+        self.syncIcon.tintColor = isSynced ? UIColor.lightGreen : tableType.tintColor()
     }
     
     func startSyncronizing() {
@@ -51,7 +52,7 @@ class ItemTableViewCell: UITableViewCell {
     }
     
     private func setBackgroundColorForRatingLabel() {
-        let red = CIColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0)
+        let red = CIColor(red: 1.0, green: 0.4, blue: 0.4, alpha: 1.0)
         let yellow = CIColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1.0)
         let green = CIColor(red: 0.2, green: 0.85, blue: 0.2, alpha: 1.0)
         var color: UIColor
@@ -79,6 +80,24 @@ class ItemTableViewCell: UITableViewCell {
         }
     }
 
+}
+
+class TableViewRowActionWithImage: UITableViewRowAction
+{
+    var image: UIImage?
+    
+    func _setButton(button: UIButton)
+    {
+        if let image = image, let titleLabel = button.titleLabel
+        {
+            let labelString = NSString(string: titleLabel.text!)
+            let titleSize = labelString.size(attributes: [NSFontAttributeName: titleLabel.font])
+            
+            button.tintColor = UIColor.white
+            button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+            button.imageEdgeInsets.right = -titleSize.width
+        }
+    }
 }
 
 struct ColorInBetween {

@@ -10,7 +10,7 @@ import UIKit
 
 class CardPageViewController: UIPageViewController, UIPageViewControllerDataSource {
     
-    var itemList = [ItemBase]()
+    var itemList = [(Int, ItemBase)]()
     var startPageIndex: Int = 0
 
     override func viewDidLoad() {
@@ -28,7 +28,7 @@ class CardPageViewController: UIPageViewController, UIPageViewControllerDataSour
         
         if index >= 0 && index < self.itemList.count {
             let vc: CardViewController = self.storyboard?.instantiateViewController(withIdentifier: "CardViewController") as! CardViewController
-            vc.chosenItem = self.itemList[index]
+            vc.chosenItem = self.itemList[index].1
             vc.index = index
             return vc
         } else {

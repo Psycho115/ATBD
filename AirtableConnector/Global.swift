@@ -56,7 +56,7 @@ enum SortType {
         case .byRating:
             return "按评分"
         case .byTitle:
-            return "按标题"
+            return "按首字母"
         }
     }
     
@@ -143,6 +143,17 @@ enum TableType {
             return "https://api.douban.com/v2/book/"
         case .movies:
             return "https://api.douban.com/v2/movie/subject/"
+        }
+    }
+    
+    func doubanSearchUrl() -> String? {
+        switch self {
+        case .unsigned:
+            return nil
+        case .books:
+            return "https://api.douban.com/v2/book/search"
+        case .movies:
+            return "https://api.douban.com/v2/movie/search"
         }
     }
     

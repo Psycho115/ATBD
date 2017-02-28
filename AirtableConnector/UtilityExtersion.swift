@@ -64,4 +64,5 @@ extension String {
         //去掉空格
         return string.replacingOccurrences(of: " ", with: "")
     }
+
 }

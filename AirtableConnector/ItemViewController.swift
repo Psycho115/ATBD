@@ -74,8 +74,9 @@ class ItemViewController: UIViewController {
         
         //UI
         self.popoverButton.tintColor = tableType.tintColor()
+        self.popoverAddButton.tintColor = tableType.tintColor()
         self.loadingBar.progressTintColor = tableType.tintColor()
-                
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,6 +90,8 @@ class ItemViewController: UIViewController {
     }
     
     // MARK: - Navigation
+    
+    // SortMenu
     
     @IBOutlet weak var popoverButton: UIBarButtonItem!
     
@@ -118,6 +121,25 @@ class ItemViewController: UIViewController {
         self.jellyAnimator?.prepare(viewController: viewController)
         self.present(viewController, animated: true, completion: nil)
     }
+    
+    // AddMenu
+    
+    @IBOutlet weak var popoverAddButton: UIBarButtonItem!
+    
+    @IBAction func popoverAddView(sender: UIBarButtonItem) {
+        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "DummyNavigationView") as! UINavigationController
+        if let addItemVC = viewController.viewControllers.first as? AddItemTableViewController{
+            addItemVC.parentVC = self
+        }
+        
+        var presentation = JellyFadeInPresentation()
+        presentation.duration = JellyConstants.Duration(rawValue: 0.2)!
+        
+        self.jellyAnimator = JellyAnimator(presentation: presentation)
+        self.jellyAnimator?.prepare(viewController: viewController)
+        self.present(viewController, animated: true, completion: nil)
+    }
+
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

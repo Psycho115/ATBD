@@ -7,204 +7,32 @@
 //
 
 import UIKit
-import SwiftyJSON
-import Alamofire
-import ReachabilitySwift
 import NVActivityIndicatorView
 import RainyRefreshControl
 import PMAlertController
 
-class ItemTableViewController: UITableViewController {
+class ItemTableViewController: UITableViewController, SwipeTableViewCellDelegate {
     
-    let reachability = Reachability()!
+    var dataSource = ItemTableViewModel()
     
+    // Outlets
     var activityIndicatorView: NVActivityIndicatorView!
     var rainyRefreshControl: RainyRefreshControl?
-    
+    var loadingBar: UIProgressView!
     var toolbarSyncButton: UIBarButtonItem?
-
-    var apiKey = "key8n8MkjeRV8cJCO"
     
-    var totalRecordsOnAirtable: Int = 0
-    
-    var TotalItemsToBeUpdated: Int {
-        get {
-            let value = self.items.filter({ !($0.updated) }).count
-            self.itemsRemainsToBeUpdated = value
-            return value
-        }
-    }
-    var itemsRemainsToBeUpdated = 0
-    
-    var idDict = [String: (String, String, Bool)]()
-    
-    var items = [ItemBase]() {
-        didSet{
-            self.loadingBar.setProgress(self.fetchingProgress, animated: true)
-            if self.fetchingProgress != 1.0 { return }
-            //change sortsetting to perform  sort
-            self.previousSortSetting = sortSetting
-        }
-    }
-    
-    var fetchingProgress: Float {
-        get {
-            if self.totalRecordsOnAirtable == 0 {
-                return 0.0
-            } else {
-                return Float(self.items.count) / Float(totalRecordsOnAirtable)
-            }
-        }
-    }
-    
-    func refresh() {
-        
+    public func refresh() {
         self.rainyRefreshControl?.beginRefreshing()
         
-        self.totalRecordsOnAirtable = 0
-        self.idDict.removeAll()
-        self.items.removeAll()
-        
-        //self.itemsSorted = [[]]
-        //self.tableView.reloadData()
-        
-        self.retrieveItems()
+        self.dataSource.clear()
+        self.dataSource.retrieveItems()
         self.navigationController?.setToolbarHidden(true, animated: true)
     }
     
-    func retrieveItems() {
+    public func UpdateAirtable() {
         
-        let authHeader: HTTPHeaders = ["Authorization": "Bearer \(apiKey)"]
-        
-        Alamofire.request(tableType.mainUrl()!, method: .get, headers: authHeader)
-            .validate()
-            .responseJSON { response in
-                switch response.result {
-                case .success(let value):
-                    if self.idDict.count != 0 {
-                        self.idDict.removeAll()
-                    }
-                    let swiftyJson = JSON(value)
-                    self.totalRecordsOnAirtable = swiftyJson["records"].count
-                    for (_,subJson):(String, JSON) in swiftyJson["records"]{
-                        let doubanID = subJson["fields"]["ID"].stringValue
-                        let completed: Bool
-                        if let _ = subJson["fields"]["Title"].string {
-                            completed = true
-                            self.items.append(self.newItemFromAirtableJSON(swiftyJson: subJson))
-                        } else { completed = false }
-                        self.idDict[doubanID] = (subJson["id"].stringValue, subJson["fields"]["Time Added"].stringValue, completed)
-                    }
-                    self.getDoubanItems()
-                case .failure(let error):
-                    if self.activityIndicatorView.isAnimating {
-                        self.activityIndicatorView.stopAnimating()
-                    }
-                    self.loadingBar.progressTintColor = UIColor.red
-                    self.loadingBar.setProgress(1.0, animated: false)
-                    self.loadingBar.dispear()
-                    print("Failed to connect to airtable API")
-                    print(error)
-                }
-            }
-    }
-    
-    private func getDoubanItems(){
-        
-        let base_url = tableType.doubanUrl()!
-    
-        for (douban_id, (airtableID, dateAdded, completed)) in self.idDict {
-            if completed { continue }
-            //retreive from douban
-            Alamofire.request(base_url+douban_id)
-                .validate()
-                .responseJSON { response in
-                    switch response.result {
-                    case .success(let value):
-                        let swiftyJson = JSON(value)
-                        let douban_item = self.newItemFromDoubanJSON(doubanID: douban_id, airtableID: airtableID, dateAdded: dateAdded, swiftyJson: swiftyJson)
-                        self.items.append(douban_item)
-                    case .failure( _):
-                        if self.activityIndicatorView.isAnimating {
-                            self.activityIndicatorView.stopAnimating()
-                        }
-                        self.loadingBar.progressTintColor = UIColor.red
-                        self.loadingBar.setProgress(1.0, animated: true)
-                        self.loadingBar.dispear()
-                        print("Failed to connect to douban API")
-                    }
-            }
-        }
-    }
-    
-    private func newItemFromDoubanJSON(doubanID: String, airtableID: String, dateAdded: String, swiftyJson: JSON) -> ItemBase {
-        let item: ItemBase
-        switch tableType {
-        case .books:
-            //authors
-            let authorsArray =  swiftyJson["author"].arrayValue.map({$0.stringValue})
-            let authors = authorsArray.joined(separator: ", ")
-            //set value
-            let title = swiftyJson["title"].stringValue
-            let rating = Double(swiftyJson["rating"]["average"].stringValue)!
-            let cover = swiftyJson["images"]["large"].stringValue
-            let isbn = Int(swiftyJson["isbn13"].stringValue)!
-            item = BookItem(updated: false, doubanID: doubanID, title: title, author: authors, rating: rating, cover: cover, isbn: isbn, airtableID: airtableID, dateAdded: dateAdded)
-        case.movies:
-            //directors
-            let directorsArray =  swiftyJson["directors"].arrayValue.map({$0["name"].stringValue})
-            let directors = directorsArray.joined(separator: ", ")
-            //actors
-            let actorsArray =  swiftyJson["casts"].arrayValue.map({$0["name"].stringValue})
-            let actors = actorsArray.joined(separator: ", ")
-            //set value
-            let title = swiftyJson["title"].stringValue
-            let rating = Double(swiftyJson["rating"]["average"].stringValue)!
-            let poster = swiftyJson["images"]["large"].stringValue
-            item = MovieItem(updated: false, doubanID: doubanID, title: title, directors: directors, rating: rating, poster: poster, actors: actors, airtableID: airtableID, dateAdded: dateAdded)
-        case .unsigned:
-            item = ItemBase()
-        }
-        print("\(item.title) added from douban!")
-        return item
-    }
-    
-    private func newItemFromAirtableJSON(swiftyJson: JSON) -> ItemBase {
-        let item: ItemBase
-        switch tableType {
-        case .books:
-            let doubanID = swiftyJson["fields"]["ID"].stringValue
-            let title = swiftyJson["fields"]["Title"].stringValue
-            let authors = swiftyJson["fields"]["Author"].stringValue
-            let rating = swiftyJson["fields"]["Rating"].doubleValue
-            let cover = swiftyJson["fields"]["Cover"][0]["url"].stringValue
-            let isbn = swiftyJson["fields"]["ISBN"].intValue
-            let airtableID = swiftyJson["id"].stringValue
-            let dateAdded = swiftyJson["fields"]["Time Added"].stringValue
-            item = BookItem(updated: true, doubanID: doubanID, title: title, author: authors, rating: rating, cover: cover, isbn: isbn, airtableID: airtableID, dateAdded: dateAdded)
-        case.movies:
-            let doubanID = swiftyJson["fields"]["ID"].stringValue
-            let title = swiftyJson["fields"]["Title"].stringValue
-            let directors = swiftyJson["fields"]["Directors"].stringValue
-            let rating = swiftyJson["fields"]["Rating"].doubleValue
-            let poster = swiftyJson["fields"]["Poster"][0]["url"].stringValue
-            let actors = swiftyJson["fields"]["Actors"].stringValue
-            let airtableID = swiftyJson["id"].stringValue
-            let dateAdded = swiftyJson["fields"]["Time Added"].stringValue
-            item = MovieItem(updated: true, doubanID: doubanID, title: title, directors: directors, rating: rating, poster: poster, actors: actors, airtableID: airtableID, dateAdded: dateAdded)
-        case .unsigned:
-            item = ItemBase()
-        }
-        print("\(item.title) added from airtable!")
-        return item
-    }
-        
-    var loadingBar: UIProgressView!
-    
-    func UpdateAirtable() {
-        
-        if self.fetchingProgress == 1.0 {
-            if self.TotalItemsToBeUpdated == 0 {
+        if self.dataSource.fetchingProgress == 1.0 {
+            if self.dataSource.TotalItemsToBeUpdated == 0 {
                 let alertVC = PMAlertController(title: "内容未更改", description: "无需更新Airtable", image: nil, style: .alert)
                 let action = PMAlertAction(title: "OK", style: .cancel, action: { () in
                     self.dismiss(animated: true)
@@ -228,32 +56,23 @@ class ItemTableViewController: UITableViewController {
         
         for (section, itemsArray) in self.itemsSorted.enumerated() {
             for (row, item) in itemsArray.enumerated() {
-                if item.updated {continue}
+                if item.1.updated {continue}
                 let cell = self.tableView.cellForRow(at: IndexPath(row: row, section: section)) as? ItemTableViewCell
                 cell?.startSyncronizing()
-                let patch_data = item.getItemJson()
-                let authHeader: HTTPHeaders = ["Authorization": "Bearer \(apiKey)"]
-                if let patchUrl = tableType.mainUrl() {
-                    Alamofire.request(patchUrl+"/"+item.airtableID, method: .patch, parameters: patch_data, encoding: JSONEncoding.default, headers: authHeader).responseJSON { response in
-                        switch response.result {
-                        case .success( _):
-                            item.updated = true
-                            self.itemsRemainsToBeUpdated -= 1
-                            print("\(item.title) updated")
-                            cell?.stopSyncronizing()
-                            if self.itemsRemainsToBeUpdated == 0 {
-                                _ = self.toolbarSyncButton?.customView?.stopRotating()
-                            }
-                        case .failure( _):
-                            print("Failed to connect to airtable API")
-                        }
+                
+                let completionClosure = {
+                    cell?.stopSyncronizing()
+                    if self.dataSource.itemsRemainsToBeUpdated == 0 {
+                        _ = self.toolbarSyncButton?.customView?.stopRotating()
                     }
                 }
+                self.dataSource.updateItem(index: item.0, completion: completionClosure)
             }
         }
     }
     
-    //life cycle
+    // MARK: - life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -279,13 +98,26 @@ class ItemTableViewController: UITableViewController {
         self.rainyRefreshControl?.addTarget(self, action: #selector(ItemTableViewController.refresh), for: .valueChanged)
         self.tableView.addSubview(self.rainyRefreshControl!)
         
-        retrieveItems()
+        //model initiate
+        self.dataSource.performWhenItemsDidSet = {
+            self.loadingBar.setProgress(self.dataSource.fetchingProgress, animated: true)
+            if self.dataSource.fetchingProgress != 1.0 { return }
+            //change sortsetting to perform  sort
+            self.previousSortSetting = sortSetting
+        }
+        let failedClosure = {
+            self.loadingBar.setProgress(self.dataSource.fetchingProgress, animated: true)
+            if self.dataSource.fetchingProgress != 1.0 { return }
+            //change sortsetting to perform  sort
+            self.previousSortSetting = sortSetting
+        }
+        self.dataSource.retrieveItems(failed: failedClosure)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if (self.items.count == 0) {
+        if (self.dataSource.items.count == 0) {
             activityIndicatorView.startAnimating()
         }
         
@@ -294,8 +126,17 @@ class ItemTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     
-    //data source for table cells
-    var itemsSorted = [[ItemBase]]() {
+    // Sort control
+    
+    private var sectionTitles = [String]()
+    private var isSorted: Bool = false
+    private var previousSortSetting: SortSettings? {
+        didSet {
+            performSortAction()
+        }
+    }
+    
+    private var itemsSorted = [[(Int, ItemBase)]]() {
         didSet{
             if !isSorted { return }
             if self.activityIndicatorView.isAnimating {
@@ -316,11 +157,9 @@ class ItemTableViewController: UITableViewController {
                             })
                             self.navigationController?.setToolbarHidden(false, animated: true)
                         }
-                }
-                )
+                })
             } else {
                 self.rainyRefreshControl?.endRefreshing()
-                //self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
                 self.tableView.reloadData()
                 self.navigationController?.setToolbarHidden(false, animated: true)
                 self.dismiss(animated: true)
@@ -328,16 +167,7 @@ class ItemTableViewController: UITableViewController {
         }
     }
     
-    var sectionTitles = [String]()
-    
-    var isSorted: Bool = false
-    var previousSortSetting: SortSettings? {
-        didSet {
-            performSortAction()
-        }
-    }
-    
-    func sortItems() {
+    public func sortItems() {
         if self.previousSortSetting == nil {
             return
         }
@@ -357,15 +187,14 @@ class ItemTableViewController: UITableViewController {
         self.itemsSorted.removeAll()
         self.sectionTitles.removeAll()
         
-        var itemsSortedTmp = [[ItemBase]]()
-        //let items = self.items
+        var itemsSortedTmp = [[(Int, ItemBase)]]()
         
         let sets = self.generateSectionSets()
         var dict = self.generateSectionDict()
         
         for (_, key) in sets.enumerated() {
             self.sectionTitles.append(key.description)
-            itemsSortedTmp.append(dict[key.description]!.sorted(by: {$0 < $1}))
+            itemsSortedTmp.append(dict[key.description]!.sorted(by: {$0.1 < $1.1}))
         }
         
         //last modification
@@ -374,17 +203,18 @@ class ItemTableViewController: UITableViewController {
     }
     
     private func generateSectionSets() -> [String] {
+        let undeletedItems = self.dataSource.items.filter( {!$0.deleted} )
         switch sortSetting.sectionType {
         case .byYear:
-            return Set(self.items.map{
+            return Set(undeletedItems.map{
                 $0.getDateComponent(unit: .year).description
             }).sorted(by: {$0<$1})
         case .byMonth:
-            return Set(self.items.map{
+            return Set(undeletedItems.map{
                 $0.getDateComponent(unit: .month).description
             }).sorted(by: {$0<$1})
         case .byTitleFirstLetter:
-            return Set(self.items.map{
+            return Set(undeletedItems.map{
                 $0.title.transformToPinYin()[0]
             }).sorted(by: {$0<$1})
         case .noSection:
@@ -392,10 +222,11 @@ class ItemTableViewController: UITableViewController {
         }
     }
     
-    private func generateSectionDict() -> [String: [ItemBase]] {
-        var dict = [String: [ItemBase]]()
+    private func generateSectionDict() -> [String: [(Int, ItemBase)]] {
+        var dict = [String: [(Int, ItemBase)]]()
         
-        for item in self.items {
+        for (index, item) in self.dataSource.items.enumerated() {
+            guard !item.deleted else { continue }
             let key: String
             switch sortSetting.sectionType {
             case .byYear:
@@ -409,16 +240,18 @@ class ItemTableViewController: UITableViewController {
             }
             
             if dict[key] != nil {
-                dict[key]!.append(item)
+                dict[key]!.append((index, item))
             }
             else {
                 dict[key] = []
-                dict[key]!.append(item)
+                dict[key]!.append((index, item))
             }
         }
         
         return dict
     }
+    
+    // TableView delegate
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.itemsSorted[section].count
@@ -439,45 +272,82 @@ class ItemTableViewController: UITableViewController {
         return self.sectionTitles[section]
     }
     
-//    override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-//        self.tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top, animated: true)
-//        return index
-//    }
-    
-//    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-//        return self.sectionTitles
-//    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemTableViewCell
         switch tableType {
         case .books:
-            if let item = self.itemsSorted[indexPath.section][indexPath.row] as? BookItem {
+            if let item = self.itemsSorted[indexPath.section][indexPath.row].1 as? BookItem {
                 cell.displayCell(rating: item.rating, title: item.title, detail: "完成时间： \(item.strDateAdded)", isSynced: item.updated)
             }
         case .movies:
-            if let item = self.itemsSorted[indexPath.section][indexPath.row] as? MovieItem {
+            if let item = self.itemsSorted[indexPath.section][indexPath.row].1 as? MovieItem {
                 cell.displayCell(rating: item.rating, title: item.title, detail: "观看时间： \(item.strDateAdded)", isSynced: item.updated)
             }
         case .unsigned:
             break
         }
+        cell.delegate = self
         return cell
+    }
+    
+    // MARK: - Edit cells
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.delete
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let iconHeight = self.tableView.rowHeight * 0.3
+        
+        let deleteAction = SwipeAction(style: .destructive, title: nil) {action in
+            let (index, _) = self.itemsSorted[indexPath.section][indexPath.row]
+            if self.itemsSorted[indexPath.section].count == 1 {
+                self.tableView.beginUpdates()
+                self.itemsSorted.remove(at: indexPath.section)
+                self.sectionTitles.remove(at: indexPath.section)
+                self.tableView.deleteSections([indexPath.section], with: .left)
+                self.tableView.endUpdates()
+            } else {
+                self.tableView.beginUpdates()
+                self.itemsSorted[indexPath.section].remove(at: indexPath.row)
+                self.tableView.deleteRows(at: [indexPath], with: .left)
+                self.tableView.endUpdates()
+            }
+            self.dataSource.deleteItem(index: index)
+            
+        }
+        deleteAction.backgroundColor = UIColor.lightRed
+        deleteAction.image = #imageLiteral(resourceName: "ic_delete_forever_white").scaledToSize(newSize: CGSize(width: iconHeight, height: iconHeight))
+        deleteAction.textColor = UIColor.white
+
+        return [deleteAction]
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeTableOptions {
+        var options = SwipeTableOptions()
+        options.expansionStyle = .none
+        options.transitionStyle = .border
+        return options
     }
     
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowCardPage"{
             if let destinationVC = segue.destination as? CardPageViewController {
                 if let cell = sender as? ItemTableViewCell{
                     let title = cell.titleLabel?.text
-                    var sortedItemList = [ItemBase]()
+                    var sortedItemList = [(Int, ItemBase)]()
                     for section in self.itemsSorted {
                         sortedItemList.append(contentsOf: section)
                     }
-                    if let index = sortedItemList.index(where: {$0.title == title}) {
+                    if let index = sortedItemList.index(where: {$0.1.title == title}) {
                         destinationVC.itemList = sortedItemList
                         destinationVC.startPageIndex = index
                     }

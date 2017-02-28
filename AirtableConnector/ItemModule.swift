@@ -11,11 +11,15 @@ import SwiftyJSON
 
 class ItemBase: Comparable {
     
+    public var deleted: Bool = false
     public var updated: Bool = false
     public var title: String = ""
-    public var rating = 0.0
+    public var rating: Double = 0.0
+    public var doubanID: String = ""
     public var airtableID: String = ""
     public var image: String = ""
+    
+    public var dateAdded: Date?
     public var strDateAdded: String {
         get {
             let formatter = DateFormatter()
@@ -29,12 +33,20 @@ class ItemBase: Comparable {
         }
     }
     
-    public var dateAdded: Date?
-    
     public func getDateComponent(unit: Calendar.Component) -> Int {
         return Calendar.current.component(unit, from: self.dateAdded!)
     }
     
+    init(updated: Bool, doubanID: String, airtableID: String, dateAdded: String) {
+        self.updated = updated
+        self.doubanID = doubanID
+        self.airtableID = airtableID
+        self.strDateAdded = dateAdded
+    }
+    
+    convenience init() {
+        self.init(updated: false, doubanID: "", airtableID: "", dateAdded: "")
+    }
     
     public var itemDetailTitle = [String]()
     
@@ -68,23 +80,32 @@ class ItemBase: Comparable {
 
 class BookItem: ItemBase{
     
-    public var doubanID = ""
     public var author = ""
     public var isbn = 0
-
-    init(updated: Bool, doubanID: String, title: String, author: String, rating: Double, cover: String, isbn: Int, airtableID: String, dateAdded: String){
-        super.init()
-        self.updated = updated
+    
+    static var itemDetailTitle = ["图片", "标题", "作者", "评分", "添加日期"]
+    
+    init(fromDoubanJSON json: JSON, doubanID: String, airtableID: String, dateAdded: String) {
+        super.init(updated: false, doubanID: doubanID, airtableID: airtableID, dateAdded: dateAdded)
+        let authorsArray =  json["author"].arrayValue.map({$0.stringValue})
         self.doubanID = doubanID
-        self.title = title
-        self.author = author
-        self.rating = rating
-        self.image = cover
-        self.isbn = isbn
-        self.airtableID = airtableID
-        self.strDateAdded = dateAdded
-        
-        itemDetailTitle = ["图片", "标题", "作者", "评分", "添加日期"]
+        self.author = authorsArray.joined(separator: ", ")
+        self.title = json["title"].stringValue
+        self.rating = Double(json["rating"]["average"].stringValue)!
+        self.image = json["images"]["large"].stringValue
+        self.isbn = Int(json["isbn13"].stringValue)!
+    }
+    
+    init(fromAirtableJSON json: JSON) {
+        let airtableID = json["id"].stringValue
+        let strDateAdded = json["fields"]["Time Added"].stringValue
+        let doubanID = json["fields"]["ID"].stringValue
+        super.init(updated: true, doubanID: doubanID, airtableID: airtableID, dateAdded: strDateAdded)
+        self.title = json["fields"]["Title"].stringValue
+        self.author = json["fields"]["Author"].stringValue
+        self.rating = json["fields"]["Rating"].doubleValue
+        self.image = json["fields"]["Cover"][0]["url"].stringValue
+        self.isbn = json["fields"]["ISBN"].intValue
     }
     
     override func getItemDetailArray() -> [String]? {
@@ -112,23 +133,33 @@ class BookItem: ItemBase{
 
 class MovieItem: ItemBase{
     
-    public var doubanID = ""
     public var directors = ""
     public var actors = ""
     
-    init(updated: Bool, doubanID: String, title: String, directors: String, rating: Double, poster: String, actors: String, airtableID: String, dateAdded: String){
-        super.init()
-        self.updated = updated
-        self.doubanID = doubanID
-        self.title = title
-        self.directors = directors
-        self.rating = rating
-        self.image = poster
-        self.actors = actors
-        self.airtableID = airtableID
-        self.strDateAdded = dateAdded
-
-        itemDetailTitle = ["图片", "标题", "导演", "演员", "评分", "添加日期"]
+    static var itemDetailTitle = ["图片", "标题", "导演", "演员", "评分", "添加日期"]
+    
+    init(fromDoubanJSON json: JSON, doubanID: String, airtableID: String, dateAdded: String) {
+        super.init(updated: false, doubanID: doubanID, airtableID: airtableID, dateAdded: dateAdded)
+        let directorsArray =  json["directors"].arrayValue.map({$0["name"].stringValue})
+        self.directors = directorsArray.joined(separator: ", ")
+        let actorsArray =  json["casts"].arrayValue.map({$0["name"].stringValue})
+        self.actors = actorsArray.joined(separator: ", ")
+        self.title = json["title"].stringValue
+        self.rating = Double(json["rating"]["average"].stringValue)!
+        self.image = json["images"]["large"].stringValue
+    }
+    
+    init(fromAirtableJSON json: JSON) {
+        let airtableID = json["id"].stringValue
+        let strDateAdded = json["fields"]["Time Added"].stringValue
+        let doubanID = json["fields"]["ID"].stringValue
+        super.init(updated: true, doubanID: doubanID, airtableID: airtableID, dateAdded: strDateAdded)
+        self.doubanID = json["fields"]["ID"].stringValue
+        self.title = json["fields"]["Title"].stringValue
+        self.directors = json["fields"]["Directors"].stringValue
+        self.rating = json["fields"]["Rating"].doubleValue
+        self.image = json["fields"]["Poster"][0]["url"].stringValue
+        self.actors = json["fields"]["Actors"].stringValue
     }
     
     override func getItemDetailArray() -> [String]? {
@@ -150,6 +181,4 @@ class MovieItem: ItemBase{
             ]
         ]
     }
-    
-    
 }
