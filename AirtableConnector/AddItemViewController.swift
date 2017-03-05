@@ -1,4 +1,12 @@
 //
+//  AddItemViewController.swift
+//  AirtableConnector
+//
+//  Created by 唐敬哲 on 2017/3/5.
+//  Copyright © 2017年 唐敬哲. All rights reserved.
+//
+
+//
 //  AddItemTableViewController.swift
 //  AirtableConnector
 //
@@ -11,9 +19,10 @@ import Alamofire
 import SwiftyJSON
 import NVActivityIndicatorView
 
-class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
+class AddItemViewController: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     var parentVC: ItemViewController?
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchView: UIView!
     @IBOutlet weak var searchIcon: UIView!
     
@@ -24,15 +33,16 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     // datasource
-    private let searchResultMaxCount = 5
+    private let searchResultMaxCount = 3
     private var items = [searchItem]()
     
     @IBOutlet weak var searchField: UITextField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // tableview
+        self.automaticallyAdjustsScrollViewInsets = true
         self.tableView.tableFooterView = UIView()
         
         // searchField
@@ -47,7 +57,7 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
         self.searchView.shadowCastView()
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-
+        
     }
     
     deinit {
@@ -59,6 +69,9 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
     func keyboardWillShow(notification:NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             self.keyboardHeight = keyboardSize.height
+            var contentInset:UIEdgeInsets = self.tableView.contentInset
+            contentInset.bottom = self.keyboardHeight
+            self.tableView.contentInset = contentInset
         }
     }
     
@@ -79,7 +92,7 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
     // dismiss action
     
     @IBOutlet weak var dismissButton: UIButton!
-
+    
     @IBAction func dismissSelf(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
@@ -107,7 +120,7 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
     
     func addHeaderView() {
         self.tableView.tableHeaderView = nil
-        let contentHeight = self.tableView.bounds.size.height - self.keyboardHeight - CGFloat(items.count*60) - UIApplication.shared.statusBarFrame.size.height
+        let contentHeight = self.tableView.bounds.size.height - self.keyboardHeight - CGFloat(items.count*60)
         if contentHeight > 0 {
             let frame = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: contentHeight)
             let headerView = UIView(frame: frame)
@@ -168,30 +181,31 @@ class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
-
+    
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return self.items.count
     }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as! SearchTableViewCell
-
+        
         cell.parentVC = self
         cell.display(title: self.items[indexPath.row].title, detail: self.items[indexPath.row].person)
-
+        
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-
+    
 }
+

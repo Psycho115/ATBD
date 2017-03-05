@@ -127,10 +127,8 @@ class ItemViewController: UIViewController {
     @IBOutlet weak var popoverAddButton: UIBarButtonItem!
     
     @IBAction func popoverAddView(sender: UIBarButtonItem) {
-        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "DummyNavigationView") as! UINavigationController
-        if let addItemVC = viewController.viewControllers.first as? AddItemTableViewController{
-            addItemVC.parentVC = self
-        }
+        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "AddItemViewController") as! AddItemViewController
+        viewController.parentVC = self
         
         var presentation = JellyFadeInPresentation()
         presentation.duration = JellyConstants.Duration(rawValue: 0.2)!

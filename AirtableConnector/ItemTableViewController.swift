@@ -94,7 +94,7 @@ class ItemTableViewController: UITableViewController, SwipeTableViewCellDelegate
         
         //refreshing
         self.refreshControl = nil
-        self.rainyRefreshControl = RainyRefreshControl(bgColor: tableType.tintColor()!)
+        self.rainyRefreshControl = RainyRefreshControl(themeColor: tableType.tintColor()!)
         self.rainyRefreshControl?.addTarget(self, action: #selector(ItemTableViewController.refresh), for: .valueChanged)
         self.tableView.addSubview(self.rainyRefreshControl!)
         

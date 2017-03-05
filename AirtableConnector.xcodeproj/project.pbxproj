@@ -14,7 +14,6 @@
 		6E1A86B41E62BB2B00BB0B1B /* SwipeCellKitOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A86AD1E62BB2B00BB0B1B /* SwipeCellKitOptions.swift */; };
 		6E1A86B51E62BB2B00BB0B1B /* SwipeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A86AE1E62BB2B00BB0B1B /* SwipeTableViewCell.swift */; };
 		6E1A86B61E62BB2B00BB0B1B /* SwipeTableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A86AF1E62BB2B00BB0B1B /* SwipeTableViewCellDelegate.swift */; };
-		6E1A86BE1E6304C900BB0B1B /* AddItemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A86BD1E6304C900BB0B1B /* AddItemTableViewController.swift */; };
 		6E1DECF31E5C834C004BEC19 /* RadioButtonGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1DECF21E5C834C004BEC19 /* RadioButtonGroupView.swift */; };
 		6E221F301E607B6E00530116 /* ItemTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E221F2F1E607B6E00530116 /* ItemTableViewModel.swift */; };
 		6E2A58531E461E5E0017D14A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2A58511E461E5E0017D14A /* Main.storyboard */; };
@@ -25,6 +24,7 @@
 		6E4585FE1E63E47700DFD3B3 /* ItemDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4585FD1E63E47700DFD3B3 /* ItemDataController.swift */; };
 		6E4586091E63E85000DFD3B3 /* ItemDataBase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E4586071E63E85000DFD3B3 /* ItemDataBase.xcdatamodeld */; };
 		6E45860B1E63ECF400DFD3B3 /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E45860A1E63ECF400DFD3B3 /* SearchTableViewCell.swift */; };
+		6E4A80CD1E6B92EE0007652E /* AddItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A80CC1E6B92EE0007652E /* AddItemViewController.swift */; };
 		6E6963CE1E40479C00D72CD8 /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6963CD1E40479C00D72CD8 /* ItemViewController.swift */; };
 		6E74166B1E48953A005902C9 /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E74166A1E48953A005902C9 /* CardViewController.swift */; };
 		6E74166D1E48A7C9005902C9 /* DetailCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E74166C1E48A7C9005902C9 /* DetailCardViewController.swift */; };
@@ -53,7 +53,6 @@
 		6E1A86AD1E62BB2B00BB0B1B /* SwipeCellKitOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeCellKitOptions.swift; sourceTree = "<group>"; };
 		6E1A86AE1E62BB2B00BB0B1B /* SwipeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeTableViewCell.swift; sourceTree = "<group>"; };
 		6E1A86AF1E62BB2B00BB0B1B /* SwipeTableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeTableViewCellDelegate.swift; sourceTree = "<group>"; };
-		6E1A86BD1E6304C900BB0B1B /* AddItemTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddItemTableViewController.swift; sourceTree = "<group>"; };
 		6E1DECF21E5C834C004BEC19 /* RadioButtonGroupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioButtonGroupView.swift; sourceTree = "<group>"; };
 		6E221F2F1E607B6E00530116 /* ItemTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemTableViewModel.swift; sourceTree = "<group>"; };
 		6E2A58521E461E5E0017D14A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -64,6 +63,7 @@
 		6E4585FD1E63E47700DFD3B3 /* ItemDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDataController.swift; sourceTree = "<group>"; };
 		6E4586081E63E85000DFD3B3 /* ItemDataBase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ItemDataBase.xcdatamodel; sourceTree = "<group>"; };
 		6E45860A1E63ECF400DFD3B3 /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
+		6E4A80CC1E6B92EE0007652E /* AddItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddItemViewController.swift; sourceTree = "<group>"; };
 		6E6963CD1E40479C00D72CD8 /* ItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
 		6E74166A1E48953A005902C9 /* CardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
 		6E74166C1E48A7C9005902C9 /* DetailCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailCardViewController.swift; sourceTree = "<group>"; };
@@ -123,7 +123,7 @@
 		6E45860C1E63EF0F00DFD3B3 /* AddItem */ = {
 			isa = PBXGroup;
 			children = (
-				6E1A86BD1E6304C900BB0B1B /* AddItemTableViewController.swift */,
+				6E4A80CC1E6B92EE0007652E /* AddItemViewController.swift */,
 				6E45860A1E63ECF400DFD3B3 /* SearchTableViewCell.swift */,
 			);
 			name = AddItem;
@@ -361,11 +361,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E1A86BE1E6304C900BB0B1B /* AddItemTableViewController.swift in Sources */,
 				6E221F301E607B6E00530116 /* ItemTableViewModel.swift in Sources */,
 				6E1A86B31E62BB2B00BB0B1B /* SwipeCellKitExtensions.swift in Sources */,
 				6E1A86B61E62BB2B00BB0B1B /* SwipeTableViewCellDelegate.swift in Sources */,
 				6E36DD8A1E4B4C8E00A29AB7 /* SortMenuViewController.swift in Sources */,
+				6E4A80CD1E6B92EE0007652E /* AddItemViewController.swift in Sources */,
 				6E89A68B1E3CF28A006FAA43 /* ItemTableViewController.swift in Sources */,
 				6E1A86B01E62BB2B00BB0B1B /* SwipeAction.swift in Sources */,
 				6EDB84E31E41AC4B00FB863A /* ItemTableViewCell.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 
 class SearchTableViewCell: UITableViewCell {
     
-    var parentVC: AddItemTableViewController?
+    var parentVC: AddItemViewController?
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var detailLabel: UILabel!
