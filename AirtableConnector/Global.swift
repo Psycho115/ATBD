@@ -12,8 +12,10 @@ import UIKit
 //sort setting
 
 enum SectionType {
+    
+    static let count = 3
+
     case noSection
-    case byYear
     case byMonth
     case byTitleFirstLetter
     
@@ -22,9 +24,7 @@ enum SectionType {
         case .noSection:
             return "不分组"
         case .byMonth:
-            return "按月份"
-        case .byYear:
-            return "按年份"
+            return "按添加时间"
         case .byTitleFirstLetter:
             return "按首字母"
         }
@@ -36,17 +36,23 @@ enum SectionType {
             return 0
         case .byMonth:
             return 2
-        case .byYear:
-            return 3
         case .byTitleFirstLetter:
             return 1
         }
     }
+    
+    static func names() -> [String] {
+        return ["不分组", "按首字母", "按添加时间"]
+    }
+
 }
 
 enum SortType {
+    static let count = 4
+    
     case byTimeAdded
     case byRating
+    case byMyRating
     case byTitle
     
     func typeStr() -> String {
@@ -54,7 +60,9 @@ enum SortType {
         case .byTimeAdded:
             return "按添加时间"
         case .byRating:
-            return "按评分"
+            return "按豆瓣评分"
+        case .byMyRating:
+            return "按我的评分"
         case .byTitle:
             return "按首字母"
         }
@@ -66,9 +74,15 @@ enum SortType {
             return 0
         case .byRating:
             return 1
-        case .byTitle:
+        case .byMyRating:
             return 2
+        case .byTitle:
+            return 3
         }
+    }
+    
+    static func names() -> [String] {
+        return ["按添加时间", "按豆瓣评分", "按我的评分", "按首字母"]
     }
 
 }
@@ -78,29 +92,29 @@ struct SortSettings {
     var sortType = SortType.byTimeAdded
     var reversed = false
     
-    mutating func matchSort(str: String) {
-        switch str {
-        case "按添加时间":
+    mutating func matchSort(int: Int) {
+        switch int {
+        case 0:
             self.sortType = .byTimeAdded
-        case "按评分":
+        case 1:
             self.sortType = .byRating
-        case "按首字母":
+        case 2:
+            self.sortType = .byMyRating
+        case 3:
             self.sortType = .byTitle
         default:
             break
         }
     }
     
-    mutating func matchSection(str: String) {
-        switch str {
-        case "不分组":
+    mutating func matchSection(int: Int) {
+        switch int {
+        case 0:
             self.sectionType = .noSection
-        case "按首字母":
+        case 1:
             self.sectionType = .byTitleFirstLetter
-        case "按月份":
+        case 2:
             self.sectionType = .byMonth
-        case "按年份":
-            self.sectionType = .byYear
         default:
             break
         }
@@ -157,6 +171,17 @@ enum TableType {
         }
     }
     
+    func entityName() -> String? {
+        switch self {
+        case .unsigned:
+            return nil
+        case .books:
+            return "DBBookItem"
+        case .movies:
+            return "DBMovieItem"
+        }
+    }
+    
     func tintColor() -> UIColor? {
         switch self {
         case .unsigned:
@@ -165,6 +190,17 @@ enum TableType {
             return UIColor.lightBlue
         case .movies:
             return UIColor.lightRed
+        }
+    }
+    
+    func nameTitle() -> String? {
+        switch self {
+        case .unsigned:
+            return nil
+        case .books:
+            return "Books"
+        case .movies:
+            return "Movies"
         }
     }
 }

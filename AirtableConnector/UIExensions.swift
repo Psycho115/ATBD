@@ -12,13 +12,13 @@ extension UIView {
     
     @IBInspectable var cornerRadius: CGFloat {
         get {
-            return layer.cornerRadius
+            return self.layer.cornerRadius
         }
         set {
-            layer.cornerRadius = newValue
+            self.layer.cornerRadius = newValue
+            self.layer.masksToBounds = true
         }
     }
-    
 }
 
 extension UIColor {
@@ -39,8 +39,8 @@ extension UIView {
             animate.duration = duration
             animate.repeatCount = Float.infinity
             animate.fromValue = 0.0
-            if isClockwise { animate.toValue = Float(M_PI * 2.0) }
-            else { animate.toValue = Float(0.0 - M_PI * 2.0) }
+            if isClockwise { animate.toValue = Float(Double.pi * 2.0) }
+            else { animate.toValue = Float(0.0 - Double.pi * 2.0) }
             self.layer.add(animate, forKey: kAnimationKey)
         }
     }
@@ -96,7 +96,7 @@ extension UIView {
         let kAnimationKey = "disappearWhileRotating"
         if self.layer.animation(forKey: kAnimationKey) == nil {
             let animate = CABasicAnimation(keyPath: "transform.rotation")
-            animate.toValue = Float(M_PI)
+            animate.toValue = Float(Double.pi)
             
             let animate2 = CABasicAnimation(keyPath: "opacity")
             animate2.fromValue = 1.0
@@ -175,15 +175,22 @@ extension UIImageView {
 
 extension UIView {
     
-    func shadowCastView() {
-        self.layer.shadowOffset = CGSize(width: 0, height: 0)
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowRadius = 5
-        self.layer.shadowOpacity = 0.3
-        self.layer.masksToBounds = false;
-        self.clipsToBounds = false;
+    func shadowCastView(offsetHeight: Int = 10, radius: CGFloat = 10, color: UIColor = UIColor.black, shadowOpacity: Float = 0.3) {
+        self.layer.shadowOffset = CGSize(width: 0, height: offsetHeight)
+        self.layer.shadowColor = color.cgColor
+        self.layer.shadowRadius = radius
+        self.layer.shadowOpacity = shadowOpacity
+        self.layer.masksToBounds = false
+        self.clipsToBounds = false
     }
     
+}
+
+extension UIView {
+    func addBorder (color: UIColor, width: Float) {
+        self.layer.borderColor = color.cgColor
+        self.layer.borderWidth = CGFloat(width)
+    }
 }
 
 extension UIColor {
@@ -209,6 +216,12 @@ extension UIColor {
     class var eggshell: UIColor {
         get {
             return UIColor(red: 0.961, green: 0.961, blue: 0.961, alpha: 1.0)
+        }
+    }
+    
+    class var greyGreen: UIColor {
+        get {
+            return UIColor(red: 0.625, green: 0.83, blue: 0.8, alpha: 1.0)
         }
     }
 }

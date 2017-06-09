@@ -7,34 +7,49 @@
 //
 
 import UIKit
+import CoreData
 
 class DetailCardViewController: UIViewController {
     
-    @IBOutlet weak var coverImage: CoverImageView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var bookmark: UIImageView!
-    @IBOutlet weak var starStack: UIStackView!
     
+    var colors: UIImageColors?
+    var image: UIImage?
     
     //model data
-    var chosenItem = ItemBase()
+    var chosenItem: NSFetchRequestResult?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.starStack.tintColor = UIColor.orange
-        self.coverImage.shadowCast()
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ShowDetailViewController))
+        self.view.addGestureRecognizer(tap)
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        coverImage.displayImage(url: self.chosenItem.image)
-        self.titleLabel.text = self.chosenItem.title
-        let stars = Int(self.chosenItem.rating)
-        let views = self.starStack.arrangedSubviews
-        for index in 0..<(5 - Int(stars/2)) {
-            views[index].isHidden = true
+        switch tableType {
+        case .books:
+            if let item = self.chosenItem as? DBBookItem {
+                self.titleLabel.text = item.title
+            }
+        case .movies:
+            if let item = self.chosenItem as? DBMovieItem {
+                self.titleLabel.text = item.title
+            }
+        case .unsigned:
+            break
         }
-        if stars % 2 == 0 {
-            views[5].isHidden = true
+    }
+    
+    // segue
+    func preSetData(image: UIImage) {
+        self.image = image
+        self.colors = image.getColors()
+    }
+    
+    func ShowDetailViewController() {
+        if let parent = self.parent as? CardViewController {
+            parent.ShowDetailViewController()
         }
     }
     
@@ -43,6 +58,7 @@ class DetailCardViewController: UIViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
     }
 
 }

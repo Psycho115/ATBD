@@ -7,37 +7,81 @@
 //
 
 import UIKit
+import Jelly
+import CoreData
 
 class ItemTableViewCell: SwipeTableViewCell {
+    
+    public var item: DBItemBase?
 
     @IBOutlet weak var syncIcon: UIImageView!
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var ratingIcon: UILabel!
     @IBOutlet weak var ratingLabel: UILabel!
+    @IBOutlet weak var coverImage: CoverImageView!
+    @IBOutlet weak var originalTitleLabel: UILabel!
+    @IBOutlet weak var ratingStars: StackedStarsView!
+    @IBOutlet weak var moreButton: UIButton!
+    @IBOutlet var tags: [UILabel]!
     
-    var rating: Double {
+    var unique: String?
+    
+    var rating: Float {
         get {
-            return Double(ratingLabel.text!)!
+            return Float(ratingLabel.text!)!
         }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         // Initialization code
         self.syncIcon.tintColor = tableType.tintColor()
+        
+        self.moreButton.cornerRadius = self.moreButton.frame.size.height*0.5
+        
+        for tag in self.tags {
+            tag.clipsToBounds = true
+            tag.cornerRadius = tag.frame.size.height/2
+            tag.backgroundColor = UIColor.greyGreen
+        }
     }
     
     override func draw(_ rect: CGRect) {
         self.setBackgroundColorForRatingLabel()
     }
     
-    func displayCell(rating: Double, title: String, detail: String, isSynced: Bool) {
-        self.titleLabel.text = title
-        self.detailLabel.text = detail
-        self.ratingLabel.text = String(rating)
+    func initCell(source: DBItemBase?, indexPath: IndexPath) {
+        
+        self.item = source
+        //self.moreButton.tag
+        
+        if let item = source as? DBBookItem {
+            displayCell(rating: item.rating, title: item.title, detail: item.dateAdded?.formatForDate, isSynced: true, unique: item.unique, image: item.images?.medium, oriTitle: item.originalTitle, myRating: item.myRating)
+        }
+        if let item = source as? DBMovieItem {
+            displayCell(rating: item.rating, title: item.title, detail: item.dateAdded?.formatForDate, isSynced: true, unique: item.unique, image: item.images?.medium, oriTitle: item.originalTitle, myRating: item.myRating)
+
+        }
+    }
+    
+    func displayCell(rating: Float?, title: String?, detail: String?, isSynced: Bool, unique: String?, image: String?, oriTitle: String?, myRating: Float?) {
+        self.titleLabel.text = title ?? ""
+        self.detailLabel.text = detail ?? ""
+        self.ratingLabel.text = String(rating ?? 0.0)
+        self.coverImage.displayImage(url: image!)
         self.syncIcon.image = isSynced ? #imageLiteral(resourceName: "ic_cloud_done_white") : #imageLiteral(resourceName: "ic_cloud_queue_white")
         self.syncIcon.tintColor = isSynced ? UIColor.lightGreen : tableType.tintColor()
+        self.originalTitleLabel.text = oriTitle ?? ""
+        self.ratingStars.display(rating: myRating ?? 0.0)
+        
+        self.unique = unique
     }
+    
+//    func updateRatings() {
+//        self.item.rate
+//    }
     
     func startSyncronizing() {
         let image = #imageLiteral(resourceName: "ic_cloud_upload_white").withRenderingMode(.alwaysTemplate)
@@ -59,7 +103,7 @@ class ItemTableViewCell: SwipeTableViewCell {
         
         let colorRatio = (rating - 6.0) / (9.0 - 6.0)
         color = ColorInBetween(clr1: red, clr2: yellow, clr3: green, ratio: Float(colorRatio)).colorInBetween
-        self.ratingLabel.layer.backgroundColor = color.cgColor
+        self.ratingIcon.layer.backgroundColor = color.cgColor
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -79,25 +123,76 @@ class ItemTableViewCell: SwipeTableViewCell {
             self.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         }
     }
+    
 
 }
 
-class TableViewRowActionWithImage: UITableViewRowAction
-{
-    var image: UIImage?
+class HeaderView: UITableViewCell {
     
-    func _setButton(button: UIButton)
-    {
-        if let image = image, let titleLabel = button.titleLabel
-        {
-            let labelString = NSString(string: titleLabel.text!)
-            let titleSize = labelString.size(attributes: [NSFontAttributeName: titleLabel.font])
-            
-            button.tintColor = UIColor.white
-            button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
-            button.imageEdgeInsets.right = -titleSize.width
+    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var line: UIView!
+    
+    @IBOutlet weak var line2: UIView!
+    @IBOutlet weak var countLabel: UILabel!
+    
+    @IBOutlet weak var line3: UIView!
+    
+    func display(title: String?, count: Int?) {
+        self.label.text = title
+        self.line.backgroundColor = UIColor.greyGreen
+        self.line2.backgroundColor = UIColor.greyGreen
+        self.line3.backgroundColor = UIColor.greyGreen
+        if count != nil {
+            self.countLabel.text = "\(count!)"
+        } else {
+            self.countLabel.text = nil
+            self.line2.isHidden = true
         }
     }
+    
+}
+
+class FooterView: UITableViewCell {
+    
+    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var line: UIView!
+    @IBOutlet weak var line2: UIView!
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        button.setImage(#imageLiteral(resourceName: "ic_arrow_drop_up_36pt"), for: .normal)
+    }
+}
+
+class StackedStarsView: UIStackView {
+    
+    @IBOutlet var stars: Array<UIImageView>!
+    
+    func display(rating: Float) {
+        
+        for star in stars {
+            star.image = #imageLiteral(resourceName: "ic_star_border")
+        }
+        
+        for star in stars {
+            star.tintColor = UIColor.orange
+        }
+        
+        let starCount = Int(rating)
+        
+        for idx in 0..<starCount {
+            self.stars[idx].isHidden = false
+            self.stars[idx].image = #imageLiteral(resourceName: "ic_star_white")
+        }
+        
+        if rating - Float(starCount) >= 0.5 {
+            self.stars[starCount].isHidden = false
+            self.stars[starCount].image = #imageLiteral(resourceName: "ic_star_half_white")
+        }
+    }
+    
 }
 
 struct ColorInBetween {

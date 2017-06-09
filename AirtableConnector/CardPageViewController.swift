@@ -7,19 +7,45 @@
 //
 
 import UIKit
+import CoreData
 
 class CardPageViewController: UIPageViewController, UIPageViewControllerDataSource {
     
-    var itemList = [(Int, ItemBase)]()
+    var itemList = [(Int, NSFetchRequestResult)]()
     var startPageIndex: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.dataSource = self
-        // Do any additional setup after loading the view.
+        
         self.setViewControllers([self.ViewControllerAtIndex(index: self.startPageIndex)!], direction: .forward, animated: true, completion: nil)
         
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        blurView.frame = self.view.frame
+        self.view.insertSubview(blurView, at: 0)
+        self.addDismissButton()
+    }
+    
+    private func addDismissButton() {
+        let frame = self.view.frame
+        let center = CGPoint(x: frame.size.width-50, y: 50)
+        let button = UIButton(frame: CGRect(origin: center, size: CGSize(width: 30, height: 30)))
+        button.setImage(#imageLiteral(resourceName: "ic_close_white_48pt"), for: .normal)
+        button.tintColor = UIColor.eggshell
+        self.view.addSubview(button)
+        
+        button.addTarget(self, action: #selector(dismissSelf), for: .touchUpInside)
+    }
+    
+    func dismissSelf() {
+        
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.alpha = 0.0
+        }) { (_) in
+            self.dismiss(animated: false, completion: nil)
+        }
     }
 
     //MARK: - Data Source
@@ -47,17 +73,8 @@ class CardPageViewController: UIPageViewController, UIPageViewControllerDataSour
         var index = (viewController as! CardViewController).index
         index += 1
         return self.ViewControllerAtIndex(index: index)
-
     }
     
-//    func presentationCount(for pageViewController: UIPageViewController) -> Int {
-//        return self.itemList.count
-//    }
-//    
-//    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-//        return self.startPageIndex
-//    }
-
     /*
     // MARK: - Navigation
 
