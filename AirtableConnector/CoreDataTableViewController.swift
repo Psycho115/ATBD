@@ -28,29 +28,15 @@ class CoreDataTableViewController: UITableViewController, NSFetchedResultsContro
     // MARK: - Data Source
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 36
+        return 30
     }
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 5
+        return 10
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var sectionTitle: String?
-        var count: Int?
-        if let sections = fetchedResultsController?.sections, sections.count > 0 {
-            sectionTitle = sections[section].name
-            count = sections[section].objects?.count
-        } else {
-            sectionTitle = nil
-        }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell") as! HeaderView
-        cell.display(title: sectionTitle, count: count)
-        let view = UIView()
-        view.addSubview(cell)
-        
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let view = UIView(frame: CGRect.zero)
         return view
-        
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

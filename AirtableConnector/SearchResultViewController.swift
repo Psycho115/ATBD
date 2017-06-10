@@ -97,8 +97,6 @@ class SearchResultViewController: UICollectionViewController, UICollectionViewDe
         alertView.frame = self.view.frame
         self.view.addSubview(alertView)
         
-        print("resultView created")
-        
         alertView.isHidden = true
         
     }

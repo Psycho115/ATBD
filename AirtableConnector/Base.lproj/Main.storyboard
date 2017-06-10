@@ -562,7 +562,7 @@
         <scene sceneID="W0o-MC-SUe">
             <objects>
                 <tableViewController wantsFullScreenLayout="YES" automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="flipHorizontal" modalPresentationStyle="currentContext" id="fAd-fV-SJc" customClass="ItemTableViewController" customModule="AirtableConnector" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="146" sectionHeaderHeight="18" sectionFooterHeight="18" id="tzf-Bx-ocY">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="146" sectionHeaderHeight="28" sectionFooterHeight="28" id="tzf-Bx-ocY">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="518"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -570,7 +570,7 @@
                         <color key="sectionIndexBackgroundColor" red="0.96079862120000004" green="0.96077799799999997" blue="0.96078205110000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" indentationWidth="0.0" reuseIdentifier="ItemCell" rowHeight="146" id="P83-Aj-ZLA" customClass="ItemTableViewCell" customModule="AirtableConnector" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="375" height="146"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="146"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="P83-Aj-ZLA" id="yj2-ue-Sxc">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="146"/>
@@ -770,7 +770,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" showsReorderControl="YES" indentationWidth="0.0" reuseIdentifier="HeaderCell" rowHeight="26" id="d9G-VA-8ev" customClass="HeaderView" customModule="AirtableConnector" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="201.5" width="375" height="26"/>
+                                <rect key="frame" x="0.0" y="174" width="375" height="26"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="d9G-VA-8ev" id="6Rb-he-Qy2">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="26"/>
@@ -837,7 +837,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="FooterView" rowHeight="43" id="1Sy-kn-Sly" customClass="FooterView" customModule="AirtableConnector" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="227.5" width="375" height="43"/>
+                                <rect key="frame" x="0.0" y="200" width="375" height="43"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1Sy-kn-Sly" id="aWO-kE-zmv">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
@@ -1239,7 +1239,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="hiL-7o-OKY">
                                         <rect key="frame" x="0.0" y="0.0" width="114.5" height="57"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M98-aT-JqI">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M98-aT-JqI" customClass="CircleSelectionButton" customModule="AirtableConnector" customModuleProvider="target">
                                                 <rect key="frame" x="39" y="0.0" width="36" height="36"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="36" id="K3r-9f-WE0"/>
@@ -1260,7 +1260,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="pM0-OF-sAB">
                                         <rect key="frame" x="114.5" y="0.0" width="114" height="57"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z6a-bB-DJK">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z6a-bB-DJK" customClass="CircleSelectionButton" customModule="AirtableConnector" customModuleProvider="target">
                                                 <rect key="frame" x="39" y="0.0" width="36" height="36"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="36" id="0qU-8g-x3U"/>
@@ -1281,7 +1281,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="TQj-EK-vpB">
                                         <rect key="frame" x="228.5" y="0.0" width="114.5" height="57"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qtg-1K-dM6">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qtg-1K-dM6" customClass="CircleSelectionButton" customModule="AirtableConnector" customModuleProvider="target">
                                                 <rect key="frame" x="39.5" y="0.0" width="36" height="36"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="36" id="nh6-s1-P6f"/>

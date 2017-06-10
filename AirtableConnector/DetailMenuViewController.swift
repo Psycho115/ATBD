@@ -52,7 +52,34 @@ class DetailMenuViewController: UIViewController {
     }
     
     @IBAction func detailButtonClicked(_ sender: UIButton) {
-
+        
+        var url: String = "http://www.baidu.com"
+        if let lItem = self.item as? DBItemBase {
+            url = lItem.mobileUrl
+        }
+        
+        let webVC = SFSafariViewController(url: URL(string: url)!)
+        webVC.view.cornerRadius = 4
+        
+        var presentation = JellySlideInPresentation()
+        presentation.directionShow = .bottom
+        presentation.directionDismiss = .bottom
+        
+        //size and postion
+        let gap = 10
+        let width = UIScreen.main.bounds.width - CGFloat(2*gap)
+        presentation.widthForViewController = JellyConstants.Size.custom(value: width)
+        presentation.heightForViewController = JellyConstants.Size.custom(value: 500)
+        presentation.gapToScreenEdge = 2 * gap
+        
+        presentation.verticalAlignemt = .bottom
+        presentation.backgroundStyle = .dimmed(alpha: 0.5)
+        presentation.presentationCurve = .easeInEaseOut
+        presentation.dismissComplete = nil
+        let jellyAnimator = JellyAnimator(presentation: presentation)
+        jellyAnimator.prepare(viewController: webVC)
+        self.present(webVC, animated: true, completion: nil)
+        
     }
     
     
@@ -159,28 +186,6 @@ class DetailMenuViewController: UIViewController {
     }
 
     @IBAction func exportButtonClicked(_ sender: UIButton) {
-        
-        let webVC = SFSafariViewController(url: URL(string: "http://www.baidu.com")!)
-        webVC.view.cornerRadius = 4
-        
-        var presentation = JellySlideInPresentation()
-        presentation.directionShow = .bottom
-        presentation.directionDismiss = .bottom
-        
-        //size and postion
-        let gap = 10
-        let width = UIScreen.main.bounds.width - CGFloat(2*gap)
-        presentation.widthForViewController = JellyConstants.Size.custom(value: width)
-        presentation.heightForViewController = JellyConstants.Size.custom(value: 600)
-        presentation.gapToScreenEdge = 2 * gap
-        
-        presentation.verticalAlignemt = .bottom
-        presentation.backgroundStyle = .dimmed(alpha: 0.5)
-        presentation.presentationCurve = .easeInEaseOut
-        presentation.dismissComplete = nil
-        let jellyAnimator = JellyAnimator(presentation: presentation)
-        jellyAnimator.prepare(viewController: webVC)
-        self.present(webVC, animated: true, completion: nil)
         
     }
 

@@ -162,13 +162,17 @@ class ItemTableViewController: CoreDataTableViewController {
         activityIndicatorView.padding = CGFloat(160)
         tableView.backgroundView = activityIndicatorView
         
-        //add footer to delete singlelines
+        //footer
         let cell = tableView.dequeueReusableCell(withIdentifier: "FooterView") as! FooterView
-        let view = UIView()
+        let footerView = UIView()
         let tap = UITapGestureRecognizer(target: self, action: #selector(ItemTableViewController.scrollToTop))
-        view.addSubview(cell)
-        view.addGestureRecognizer(tap)
-        self.tableView.tableFooterView = view
+        footerView.addSubview(cell)
+        footerView.addGestureRecognizer(tap)
+        self.tableView.tableFooterView = footerView
+        
+        let headerView = UIView()
+        headerView.bounds = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 10)
+        self.tableView.tableHeaderView = headerView
         
         //section index
         self.tableView.sectionIndexColor = self.tableType.tintColor()!
@@ -182,7 +186,7 @@ class ItemTableViewController: CoreDataTableViewController {
         
         self.previousSortSetting = sortSetting
         
-        //self.tableView.contentInset.top = 12
+        //self.tableView.contentInset.top = 10
 
     }
     
@@ -212,6 +216,33 @@ class ItemTableViewController: CoreDataTableViewController {
         cell.initCell(source: fetchedResultsController?.object(at: indexPath) as? DBItemBase, indexPath: indexPath)
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        var sectionTitle: String?
+        var count: Int?
+        if let sections = fetchedResultsController?.sections, sections.count > 0 {
+            sectionTitle = sections[section].name
+            count = sections[section].objects?.count
+        } else {
+            sectionTitle = nil
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell") as! HeaderView
+        var countString: String?
+        switch self.tableType {
+        case .books:
+            countString = "\(count!) 本"
+        case .movies:
+            countString = "\(count!) 部"
+        default:
+            countString = nil
+        }
+        cell.display(title: sectionTitle, count: countString)
+        let view = UIView()
+        view.addSubview(cell)
+        
+        return view
     }
     
     // Actions 

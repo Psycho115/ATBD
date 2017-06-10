@@ -23,6 +23,12 @@ public class DBBookItem: NSManagedObject, DBItemBase {
         }
     }
     
+    var mobileUrl: String {
+        get {
+            return "https://m.douban.com/book/subject/" + self.unique!
+        }
+    }
+    
     public class func InsertBookItem(id: String, inContext context: NSManagedObjectContext?) {
         guard context != nil else {
             return

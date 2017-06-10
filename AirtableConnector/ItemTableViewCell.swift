@@ -137,13 +137,16 @@ class HeaderView: UITableViewCell {
     
     @IBOutlet weak var line3: UIView!
     
-    func display(title: String?, count: Int?) {
-        self.label.text = title
+    override func awakeFromNib() {
+    }
+    
+    func display(title: String?, count: String?) {
         self.line.backgroundColor = UIColor.greyGreen
         self.line2.backgroundColor = UIColor.greyGreen
         self.line3.backgroundColor = UIColor.greyGreen
+        self.label.text = title
         if count != nil {
-            self.countLabel.text = "\(count!)"
+            self.countLabel.text = count
         } else {
             self.countLabel.text = nil
             self.line2.isHidden = true
@@ -161,7 +164,6 @@ class FooterView: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         button.setImage(#imageLiteral(resourceName: "ic_arrow_drop_up_36pt"), for: .normal)
     }
 }

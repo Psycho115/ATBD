@@ -22,4 +22,6 @@ protocol DBItemBase {
     
     func getDate() -> NSDate
     func setDate(date: NSDate?)
+    
+    var mobileUrl: String { get }
 }

@@ -23,6 +23,13 @@ public class DBMovieItem: NSManagedObject, DBItemBase {
         }
     }
     
+    var mobileUrl: String {
+        get {
+            return "https://m.douban.com/movie/subject/" + self.unique!
+        }
+    }
+
+    
     public class func InsertMovieItem(id: String, inContext context: NSManagedObjectContext?) {
         guard context != nil else {
             return
